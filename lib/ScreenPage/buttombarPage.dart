@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import '../UtilsPage/ColorsPage.dart';
+import 'HomePage.dart';
+import 'Payment_GetwayPage.dart';
+import 'ProfilePage.dart';
+import 'QRScannerPage.dart';
+import 'TransactionPage.dart';
+
+class BottomNavPage extends StatefulWidget {
+  const BottomNavPage({super.key});
+
+  @override
+  State<BottomNavPage> createState() => _BottomNavPageState();
+}
+
+class _BottomNavPageState extends State<BottomNavPage> {
+  int _currentIndex = 0;
+
+  final items = <Widget>[
+    Icon(Icons.home, size: 30, color: AppColors.golden),
+    Icon(Icons.history, size: 30, color: AppColors.golden),
+    Icon(Icons.qr_code_scanner, size: 30, color: AppColors.golden),
+    Icon(Icons.credit_card, size: 30, color: AppColors.golden),
+    Icon(Icons.person, size: 30, color: AppColors.golden),
+  ];
+
+  final List<Widget> _pages = [
+    HomePage(),
+    TransactionHistoryPage(),
+    QrScannerPage(),
+    AddToCardPage(),
+    const ProfilePage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (_currentIndex > 0) {
+          setState(() {
+            _currentIndex--; // 🔹 back दबाने पर index घटेगा
+          });
+          return false; // app close नहीं होगा
+        }
+        return true; // अगर index 0 है तो app close होगा
+      },
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: AppColors.white,
+        body: _pages[_currentIndex],
+        bottomNavigationBar: CurvedNavigationBar(
+          backgroundColor: Colors.transparent,
+          color: AppColors.secondary, // Bar background color
+          buttonBackgroundColor: AppColors.primary, // Selected item
+          height: 60,
+          index: _currentIndex,
+          animationDuration: const Duration(milliseconds: 300),
+          animationCurve: Curves.easeInOut,
+          items: items,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
