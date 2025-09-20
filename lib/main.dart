@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 
+import 'ScreenPage/LoginPage.dart';
+import 'ScreenPage/PinSetPage.dart';
+import 'ScreenPage/PinverifyPage.dart';
+import 'ScreenPage/buttombarPage.dart';
 import 'ScreenPage/splashPage.dart';
 
 void main() {
@@ -15,10 +19,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'DSOI',
 debugShowCheckedModeBanner: false,
-      home:SplashScreen(),
-      //home:HomePage(),
+     home:SplashScreen(),
     );
   }
 }

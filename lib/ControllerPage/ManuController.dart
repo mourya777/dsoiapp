@@ -33,6 +33,9 @@ class MenuCardController extends GetxController {
     MenuCardModel(
       name: "Drinks",
       image: "Assets/Drink/Green Tea.jpeg",
+    ), MenuCardModel(
+      name: "Liquors",
+      image: "Assets/Liquor/Gin.jpeg",
     ),
   ].obs;
 
@@ -52,7 +55,7 @@ class MenuCardController extends GetxController {
 
   // Non-Veg items
   final RxList<MenuItemModel> nonVegItems = <MenuItemModel>[
-    MenuItemModel(name: "Chicken Biryani", price: "₹360", image: "Assets/Non-Veg/Chicken Tikka.jpeg"),
+    MenuItemModel(name: "Chicken Biryani", price: "₹360", image: "Assets/Non-Veg/download.jpeg"),
     MenuItemModel(name: "Grilled Chicken", price: "₹330", image: "Assets/Non-Veg/Grilled Chicken.jpeg"),
     MenuItemModel(name: "Mutton Curry", price: "₹350", image: "Assets/Non-Veg/Mutton Curry.jpeg"),
     MenuItemModel(name: "Fish Fry", price: "₹350", image: "Assets/Non-Veg/Fish Fry.jpeg"),

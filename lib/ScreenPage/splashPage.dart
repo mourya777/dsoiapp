@@ -29,12 +29,12 @@ class SplashScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Image(
-                image: AssetImage('Assets/Images/dsoi_logo.png'),
-                width: 300,
-                height: 300,
+                image: AssetImage('Assets/Images/appbar_logo-removebg-preview.png'),
+                width: 250,
+                height: 250,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 20),
+
               Text(
                 "DSOI JABALPUR",
                 style: TextStyle(

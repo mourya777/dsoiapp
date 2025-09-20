@@ -4,7 +4,7 @@ class HomeController extends GetxController {
   // 🔹 Profile Data
   var memberName = "Rahul Sharma".obs;
   var membershipNo = "12345".obs;
-  var balance = "₹1500".obs;
+  var balance = "₹1500".obs; // balance check ke liye
   var memberType = "Main Member".obs;
   var location = "DOI JABALPUR".obs;
   var mobileNo = "9876543210".obs;
@@ -44,4 +44,9 @@ class HomeController extends GetxController {
       ]
     },
   ].obs;
+
+  // 🔹 Function to update balance
+  void updateBalance(int newBalance) {
+    balance.value = "₹$newBalance";
+  }
 }

@@ -1,138 +1,256 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../ControllerPage/HomeController.dart';
+import '../ControllerPage/ManuitemController.dart';
+import '../ControllerPage/LiquorController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/AppBar.dart';
 
-class AddToCardPage extends StatefulWidget {
-  const AddToCardPage({Key? key,}) : super(key: key);
+class AddToCartPage extends StatelessWidget {
+  AddToCartPage({Key? key}) : super(key: key);
 
-  @override
-  State<AddToCardPage> createState() => _AddToCardPageState();
-}
-
-class _AddToCardPageState extends State<AddToCardPage> {
-  List<Map<String, dynamic>> cartItems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadCartItems();
-  }
-
-  Future<void> loadCartItems() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString("cart_items");
-    if (data != null) {
-      setState(() {
-        cartItems = List<Map<String, dynamic>>.from(jsonDecode(data));
-      });
-    }
-  }
-
-  int getTotalPrice() {
-    int total = 0;
-    for (var item in cartItems) {
-      int price = int.tryParse(item['price'].toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-      int qty = (item['qty'] is int) ? item['qty'] : int.tryParse(item['qty'].toString()) ?? 0;
-      total += price * qty;
-    }
-    return total;
-  }
+  final CartController controller = Get.put(CartController());
+  final LiquorController liquorController = Get.put(LiquorController());
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("My Cart", style: TextStyle(color: AppColors.golden)),
-        backgroundColor: AppColors.primary,
-        iconTheme: IconThemeData(color: AppColors.golden),
-      ),
-      backgroundColor: AppColors.white,
-      body: cartItems.isEmpty
-          ? Center(
-        child: Text(
-          "No items in cart",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
-        ),
-      )
-          : Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    leading: Image.asset(item['image'], width: 60, height: 60, fit: BoxFit.cover),
-                    title: Text(item['name'], style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.golden)),
-                    subtitle: Text("${item['price']} x ${item['qty']}"),
-                    trailing: Text(
-                      "₹${(int.tryParse(item['price'].toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0) * item['qty']}/-",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary,fontSize: 15),
+            appBar: AdvancedAppBar(),
+
+    backgroundColor: AppColors.white,
+      body: Obx(() {
+        // combine both carts
+        final combinedCart = [...controller.cartItems, ...liquorController.cartItems];
+
+        if (combinedCart.isEmpty) {
+          return Center(
+            child: Text(
+              "Your cart is empty",
+              style: TextStyle(color: AppColors.primary, fontSize: 18),
+            ),
+          );
+        }
+
+        return Stack(
+          children: [
+            Container(
+              color: AppColors.primary.withOpacity(0.2),
+              child: ListView.builder(
+                padding: EdgeInsets.only(bottom: 200),
+                itemCount: combinedCart.length,
+                itemBuilder: (context, index) {
+                  var item = combinedCart[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(item['image'],
+                                width: 80, height: 80, fit: BoxFit.cover),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item['name'],
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: AppColors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 6),
+                                item['type'] == 'liquor'
+                                    ? Text(
+                                  "Small: ${item['small']} | Large: ${item['large']}",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.primary),
+                                )
+                                    : Text(
+                                  "Qty: ${item['qty']}",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.primary),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  "${item['price']}/-",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        shape: BoxShape.circle),
+                                    child: IconButton(
+                                      icon: Icon(Icons.remove, color: Colors.black),
+                                      onPressed: () {
+                                        if (item['type'] == 'liquor') {
+                                          liquorController.removeItem(item['category']);
+                                        } else {
+                                          controller.updateQty(index, -1, '');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        shape: BoxShape.circle),
+                                    child: IconButton(
+                                      icon: Icon(Icons.add, color: Colors.black),
+                                      onPressed: () {
+                                        if (item['type'] == 'liquor') {
+                                          liquorController.addItem(item['category']);
+                                        } else {
+                                          controller.updateQty(index, 1, '');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  if (item['type'] == 'liquor') {
+                                    liquorController.removeItem(item['category']);
+                                  } else {
+                                    controller.removeItem(index);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
+                  );
+                },
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 70,
+              child: Obx(() {
+                int total = controller.getTotalPrice() + liquorController.getTotalPrice();
+                if (total == 0) return SizedBox.shrink();
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Total: ₹$total/-",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.khakiLight,
+                              AppColors.primary,
+                              AppColors.secondary
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          onPressed: () async {
+                            final balanceString = homeController.balance.value
+                                .replaceAll(RegExp(r'[^0-9]'), '');
+                            final balance = int.tryParse(balanceString) ?? 0;
+
+                            if (total > balance) {
+
+
+
+
+                              Get.snackbar(
+                                "Error",
+                                "You don't have sufficient balance.",
+                                backgroundColor: AppColors.primary,
+                                colorText: AppColors.white,
+                                snackPosition: SnackPosition.BOTTOM,
+                                borderColor: Colors.red,
+                                borderWidth: 2,
+                              );
+
+
+
+
+                            } else {
+                              await controller.saveCart();
+                              await liquorController.saveCart();
+
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  "cart_items", jsonEncode(controller.cartItems));
+                              await prefs.setString(
+                                  "liquor_cart_items", jsonEncode(liquorController.cartItems));
+
+                              Get.snackbar(
+                                "Order",
+                                "Your order ready in 5 minutes!",
+                                backgroundColor: AppColors.primary,
+                                colorText: AppColors.golden,
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          },
+                          child: Text(
+                            "RESET ODER",
+                            style: TextStyle(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              },
+              }),
             ),
-          ),
-
-          // Bottom total and Payment button
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Total",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
-                    ),
-                    Text(
-                      "₹${getTotalPrice()}/-",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 70),
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 50,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       // Payment logic here
-                //       Get.snackbar("Payment", "Proceed to Payment", snackPosition: SnackPosition.BOTTOM);
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: AppColors.primary,
-                //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                //     ),
-                //     child: const Text(
-                //       "Payment",
-                //       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.golden),
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 }

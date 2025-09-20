@@ -29,7 +29,7 @@ class _BottomNavPageState extends State<BottomNavPage> {
     HomePage(),
     TransactionHistoryPage(),
     QrScannerPage(),
-    AddToCardPage(),
+    AddToCartPage(),
     const ProfilePage(),
   ];
 
@@ -47,17 +47,32 @@ class _BottomNavPageState extends State<BottomNavPage> {
       },
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.primary.withOpacity(0.2),
         body: _pages[_currentIndex],
         bottomNavigationBar: CurvedNavigationBar(
           backgroundColor: Colors.transparent,
-          color: AppColors.secondary, // Bar background color
-          buttonBackgroundColor: AppColors.primary, // Selected item
+          color: AppColors.secondary,
+          buttonBackgroundColor: AppColors.primary,
           height: 60,
           index: _currentIndex,
           animationDuration: const Duration(milliseconds: 300),
           animationCurve: Curves.easeInOut,
-          items: items,
+          items: List.generate(items.length, (index) {
+            final isActive = index == _currentIndex;
+            return Container(
+              decoration: isActive
+                  ? BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.golden, // Golden circle
+                  width: 3,
+                ),
+              )
+                  : null,
+              padding: const EdgeInsets.all(8),
+              child: items[index],
+            );
+          }),
           onTap: (index) {
             setState(() {
               _currentIndex = index;

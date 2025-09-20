@@ -16,9 +16,12 @@ class LoginController extends GetxController {
         "Error",
         "Please enter a valid 10-digit mobile number",
         backgroundColor: AppColors.primary,
-        colorText: AppColors.golden,
+        colorText: AppColors.white,
         snackPosition: SnackPosition.BOTTOM,
+        borderColor: AppColors.red,
+        borderWidth: 2, // border ki thickness
       );
+
       return;
     }
 
@@ -30,7 +33,7 @@ class LoginController extends GetxController {
       // open OTP bottom sheet
       showModalBottomSheet(
         context: context,
-        isScrollControlled: true, // keyboard ke sath adjust hoga
+        isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (context) {
           final TextEditingController otpController = TextEditingController();
@@ -56,48 +59,55 @@ class LoginController extends GetxController {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Verify OTP",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.golden,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.verified,color: AppColors.primary,size: 35,),SizedBox(width: 8,),
+                             Text(
+                              "VERIFY OTP",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        CircleAvatar(
-                          backgroundColor: AppColors.khakiLight,
-                          child: IconButton(
-                            icon: const Icon(Icons.close, color: AppColors.primary),
-                            onPressed: () => Get.back(),
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: AppColors.red),
+                          onPressed: () => Get.back(),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 50),
 
                     // OTP Field
-                    TextField(
-                      controller: otpController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 6,
-                      style: const TextStyle(color: AppColors.golden),
-                      decoration: InputDecoration(
-                        counterText: "",
-                        labelText: "Enter OTP",
-                        labelStyle: const TextStyle(color: AppColors.khakiLight),
-                        prefixIcon: const Icon(Icons.lock, color: AppColors.khakiLight),
-                        filled: true,
-                        fillColor: AppColors.khaki,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    SizedBox(
+                      width: size.width * 1,
+                      child: TextField(
+                        controller: otpController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        style: const TextStyle(color: AppColors.black),
+                        decoration: InputDecoration(
+                          counterText: "",
+                          labelText: "Enter the OTP sent to your number",
+                          hint: Text("Enter the OTP sent to your number",style: TextStyle(color: AppColors.grey),),
+                          labelStyle: const TextStyle(color: AppColors.black),
+                          prefixIcon: const Icon(Icons.lock, color: AppColors.primary),
+                          filled: true,
+                          fillColor: AppColors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
 
                     // OTP Verify Button
                     Container(
-                      width: size.width * 0.6,
+                      width: size.width * 1,
                       height: 50,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
@@ -120,15 +130,17 @@ class LoginController extends GetxController {
                           ),
                         ),
                         child: const Text(
-                          "Verify OTP",
+                          "VERIFY OTP WITH MOBILE NO.",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.golden,
+                            color: AppColors.white,
                           ),
                         ),
                       ),
                     ),
+                    const SizedBox(height: 20),
+
                   ],
                 ),
               ),

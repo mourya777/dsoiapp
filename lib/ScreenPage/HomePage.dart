@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/HomeController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/AppBar.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -10,14 +11,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        body: Padding(
+    final size=MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AdvancedAppBar(),
+    
+    
+      backgroundColor: AppColors.white,
+      body: Container(
+        height: size.height*1,
+        color: AppColors.primary.withOpacity(0.2),
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // 🔹 Profile + Balance Card
+              SizedBox(height: 15,),
               Obx(() => Container(
                 padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
@@ -25,16 +32,9 @@ class HomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.khaki.withOpacity(0.6),
-                      offset: const Offset(0, 3),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
-                      offset: const Offset(0, 3),
-                      blurRadius: 10,
-                      spreadRadius: 0,
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: const Offset(2, 4),
                     ),
                   ],
                 ),
@@ -57,13 +57,13 @@ class HomePage extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.person,
-                                    color: AppColors.golden, size: 18),
+                                    color: AppColors.primary, size: 18),
                                 const SizedBox(width: 5),
                                 Text(
                                   controller.memberName.value,
                                   style: const TextStyle(
                                     fontSize: 18,
-                                    color: AppColors.golden,
+                                    color: AppColors.black,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -73,13 +73,13 @@ class HomePage extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.card_membership,
-                                    color: AppColors.golden, size: 16),
+                                    color: AppColors.primary, size: 16),
                                 const SizedBox(width: 5),
                                 Text(
                                   "Member ID: ${controller.membershipNo.value}",
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: AppColors.golden,
+                                    color: AppColors.black,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -89,13 +89,13 @@ class HomePage extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.phone,
-                                    color: AppColors.golden, size: 16),
+                                    color: AppColors.primary, size: 16),
                                 const SizedBox(width: 5),
                                 Text(
                                   "Mobile: ${controller.mobileNo.value}",
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: AppColors.golden,
+                                    color: AppColors.black,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -120,16 +120,16 @@ class HomePage extends StatelessWidget {
                               "Current Balance",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: AppColors.golden,
+                                color: AppColors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              controller.balance.value,
+                              "${controller.balance.value}/-",
                               style: const TextStyle(
                                 fontSize: 28,
-                                color: AppColors.golden,
+                                color: AppColors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -138,7 +138,7 @@ class HomePage extends StatelessWidget {
                         Container(
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors.golden,
+                            color: AppColors.primary,
                           ),
                           padding: const EdgeInsets.all(10),
                           child: const Icon(
@@ -155,10 +155,9 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // 🔹 Last Transaction (Food Card)
               Obx(() => Container(
                 width: double.infinity,
-                margin: const EdgeInsets.all(12),
+                margin: const EdgeInsets.all(0),
                 padding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -177,15 +176,15 @@ class HomePage extends StatelessWidget {
                     dividerColor: Colors.transparent,
                     expansionTileTheme:
                     const ExpansionTileThemeData(
-                      iconColor: AppColors.golden,
-                      collapsedIconColor: AppColors.golden,
+                      iconColor: AppColors.grey,
+                      collapsedIconColor: AppColors.grey,
                     ),
                   ),
                   child: ExpansionTile(
                     title: Text(
                       controller.recentTransactionTitle.value,
                       style: const TextStyle(
-                        color: AppColors.golden,
+                        color: AppColors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -194,64 +193,64 @@ class HomePage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          controller.recentTransactionAmount.value,
+                          "${controller.recentTransactionAmount.value}/-",
                           style: const TextStyle(
-                            color: AppColors.golden,
+                            color: AppColors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(width: 8),
                         const Icon(Icons.expand_more,
-                            color: AppColors.golden),
+                            color: AppColors.primary),
                       ],
                     ),
                     children: [
                       const Divider(color: AppColors.khakiLight),
                       ListTile(
-                        leading: Icon(Icons.local_pizza, color: AppColors.golden),
+                        leading: Icon(Icons.local_pizza, color: AppColors.primary),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Pizza",
-                              style: TextStyle(color: AppColors.golden, fontSize: 16),
+                              style: TextStyle(color: AppColors.black, fontSize: 16),
                             ),
                             Text(
                               "₹200/-",
-                              style: TextStyle(color: AppColors.golden, fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: AppColors.black, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                       ),
                       ListTile(
-                        leading: Icon(Icons.lunch_dining, color: AppColors.golden),
+                        leading: Icon(Icons.lunch_dining, color: AppColors.primary),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Burger",
-                              style: TextStyle(color: AppColors.golden, fontSize: 16),
+                              style: TextStyle(color: AppColors.black, fontSize: 16),
                             ),
                             Text(
                               "₹150/-",
-                              style: TextStyle(color: AppColors.golden, fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: AppColors.black, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                       ),
                       ListTile(
-                        leading: Icon(Icons.local_drink, color: AppColors.golden),
+                        leading: Icon(Icons.local_drink, color: AppColors.primary),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Cold Drink",
-                              style: TextStyle(color: AppColors.golden, fontSize: 16),
+                              style: TextStyle(color: AppColors.black, fontSize: 16),
                             ),
                             Text(
                               "₹150/-",
-                              style: TextStyle(color: AppColors.golden, fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: AppColors.black, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -265,7 +264,7 @@ class HomePage extends StatelessWidget {
                           child: Text(
                             controller.recentTransactionDate.value,
                             style: const TextStyle(
-                              color: AppColors.golden,
+                              color: AppColors.grey,
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                             ),
@@ -276,6 +275,34 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               )),
+              const SizedBox(height: 16),
+
+              TextButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: () {
+                  Get.snackbar(
+                    "Info",
+                    "No more transactions available",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: AppColors.primary,
+                    colorText: AppColors.white,
+                  );
+                },
+                child: const Text(
+                  "NO MORE",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.black),
+                ),
+              ),
             ],
           ),
         ),

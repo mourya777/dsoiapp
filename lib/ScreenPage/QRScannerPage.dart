@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/AppBar.dart';
 import 'ManuPage.dart';
 
 class QrScannerPage extends StatefulWidget {
@@ -32,9 +33,9 @@ class _QrScannerPageState extends State<QrScannerPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AdvancedAppBar(),
       body: Stack(
         children: [
-          // 🔹 Fullscreen QR Scanner (no black border now)
           QRView(
             key: qrKey,
             onQRViewCreated: _onQRViewCreated,
@@ -47,7 +48,6 @@ class _QrScannerPageState extends State<QrScannerPage> {
             ),
           ),
 
-          // 🔹 Back button + title
           Positioned(
             top: 40,
             left: 16,
@@ -74,7 +74,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
 
 
           Positioned(
-            bottom: 40,
+            bottom: 100,
             left: 16,
             right: 16,
             child: Container(
@@ -100,7 +100,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                       ? "✅ Scanned! Opening menu..."
                       : "📷 Align QR code inside the frame",
                   style: const TextStyle(
-                    color: AppColors.golden,
+                    color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

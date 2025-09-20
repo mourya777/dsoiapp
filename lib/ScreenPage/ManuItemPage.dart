@@ -5,7 +5,7 @@ import 'package:resturent/UtilsPage/ColorsPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../ControllerPage/HomeController.dart';
 import '../ControllerPage/ManuController.dart';
-import 'Payment_GetwayPage.dart';
+import '../wedgetPage/AppBar.dart';
 
 class MenuItemsView extends StatelessWidget {
   final int categoryIndex;
@@ -17,6 +17,8 @@ class MenuItemsView extends StatelessWidget {
   final homeController = Get.put(HomeController());
 
   RxList items = RxList();
+  final RxString searchQuery = "".obs; // ✅ search text reactive
+  final TextEditingController searchController = TextEditingController();
 
   // ✅ Save items to local storage
   Future<void> saveSelectedItems(List<Map<String, dynamic>> selectedItems) async {
@@ -57,95 +59,156 @@ class MenuItemsView extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: AppColors.golden),
-        title: Text(
-          categoryName,
-          style: TextStyle(color: AppColors.golden, fontSize: 32, fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: AdvancedAppBar(),
+
       backgroundColor: AppColors.white,
       body: Obx(() {
-        return ListView.builder(
-          padding: EdgeInsets.all(16),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Card(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    ClipRRect(
+        final filteredItems = items
+            .where((item) =>
+            item.name.toString().toLowerCase().contains(searchQuery.value))
+            .toList();
+
+        return Container(
+          color: AppColors.primary.withOpacity(0.5),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: TextField(
+                  onChanged: (value) => searchQuery.value = value.toLowerCase(),
+                  decoration: InputDecoration(
+                    hintText: "Search items",
+                    prefixIcon: const Icon(Icons.search, color: AppColors.black),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(item.image, width: 80, height: 80, fit: BoxFit.cover),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(item.name,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: AppColors.golden,
-                                  fontWeight: FontWeight.bold)),
-                          SizedBox(height: 6),
-                          Text("${item.price}/-",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold)),
-                        ],
+                      borderSide: BorderSide(
+                        color: AppColors.black.withOpacity(0.3),
+                        width: 1,
                       ),
                     ),
-                    Obx(() => Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.shade200,
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              if (qtyMap[index]! > 0) {
-                                qtyMap[index] = qtyMap[index]! - 1;
-                              }
-                            },
-                            icon: Icon(Icons.remove, color: Colors.black),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            "${qtyMap[index]}",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.shade200,
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              qtyMap[index] = qtyMap[index]! + 1;
-                            },
-                            icon: Icon(Icons.add, color: Colors.black),
-                          ),
-                        ),
-                      ],
-                    ))
-                  ],
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: AppColors.black.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            );
-          },
+
+              // ✅ Expanded ListView
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: filteredItems.length,
+                  itemBuilder: (context, index) {
+                    final item = filteredItems[index];
+                    final actualIndex = items.indexOf(item); // map qty correctly
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(item.image,
+                                  width: 80, height: 80, fit: BoxFit.cover),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item.name, maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          color: AppColors.black,
+                                          fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 6),
+                                  Text("${item.price}/-",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                            Obx(() => Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      if (qtyMap[actualIndex]! > 0) {
+                                        qtyMap[actualIndex] =
+                                            qtyMap[actualIndex]! - 1;
+                                      }
+                                    },
+                                    icon: const Icon(Icons.remove,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8),
+                                  child: Text(
+                                    "${qtyMap[actualIndex]}",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      qtyMap[actualIndex] =
+                                          qtyMap[actualIndex]! + 1;
+                                    },
+                                    icon: const Icon(Icons.add,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                              ],
+                            ))
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+            ],
+          ),
         );
       }),
 
+
+      // ✅ Bottom nav remains same
       bottomNavigationBar: Obx(() {
         final selectedItems = <Map<String, dynamic>>[];
         for (int i = 0; i < items.length; i++) {
@@ -225,10 +288,15 @@ class MenuItemsView extends StatelessWidget {
                         snackPosition: SnackPosition.BOTTOM,
                       );
                     } else {
-                      // ✅ Delete old cart and save new data
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.remove("cart_items"); // delete old data
-                      final encoded = selectedItems.map((e) {
+
+                      List<dynamic> existingCart = [];
+                      final savedCart = prefs.getString("cart_items");
+                      if (savedCart != null) {
+                        existingCart = jsonDecode(savedCart);
+                      }
+
+                      final newItems = selectedItems.map((e) {
                         return {
                           "name": e['item'].name,
                           "price": e['item'].price,
@@ -236,17 +304,21 @@ class MenuItemsView extends StatelessWidget {
                           "qty": e['qty'],
                         };
                       }).toList();
-                      await prefs.setString("cart_items", jsonEncode(encoded));
+
+                      existingCart.addAll(newItems);
+
+                      await prefs.setString("cart_items", jsonEncode(existingCart));
 
                       Get.snackbar(
                         "Success",
-                        "Order placed successfully!",
+                        "Items added to cart successfully!",
                         backgroundColor: AppColors.primary,
                         colorText: AppColors.golden,
                         snackPosition: SnackPosition.BOTTOM,
                       );
                     }
                   },
+
 
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

@@ -1,4 +1,3 @@
-// splash_controller.dart
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ class SplashController extends GetxController {
   void onInit() {
     super.onInit();
     Timer(const Duration(seconds: 3), () {
-      Get.off(() =>  LoginView()); // Remove splash from stack
+      Get.off(() =>  LoginView());
     });
   }
 }

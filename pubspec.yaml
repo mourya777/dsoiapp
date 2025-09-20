@@ -38,6 +38,7 @@ flutter:
     - Assets/Non-Veg/
     - Assets/Snack/
     - Assets/Veg/
+    - Assets/Liquor/
     - Assets/Images/man_Image.jpg
 
 dependency_overrides:
