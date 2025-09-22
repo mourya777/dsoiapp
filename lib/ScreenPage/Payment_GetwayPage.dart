@@ -7,6 +7,7 @@ import '../ControllerPage/ManuitemController.dart';
 import '../ControllerPage/LiquorController.dart';
 import '../UtilsPage/ColorsPage.dart';
 import '../wedgetPage/AppBar.dart';
+import '../wedgetPage/SnackBarMessage.dart';
 
 class AddToCartPage extends StatelessWidget {
   AddToCartPage({Key? key}) : super(key: key);
@@ -18,228 +19,250 @@ class AddToCartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            appBar: AdvancedAppBar(),
-
-    backgroundColor: AppColors.white,
+      appBar: AdvancedAppBar(),
       body: Obx(() {
-        // combine both carts
         final combinedCart = [...controller.cartItems, ...liquorController.cartItems];
 
         if (combinedCart.isEmpty) {
           return Center(
             child: Text(
               "Your cart is empty",
-              style: TextStyle(color: AppColors.primary, fontSize: 18),
+              style: TextStyle(fontSize: 18, color: AppColors.primary),
             ),
           );
         }
 
         return Stack(
           children: [
-            Container(
-              color: AppColors.primary.withOpacity(0.2),
-              child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 200),
-                itemCount: combinedCart.length,
-                itemBuilder: (context, index) {
-                  var item = combinedCart[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(item['image'],
-                                width: 80, height: 80, fit: BoxFit.cover),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 120), // <-- Added bottom padding
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          children: List.generate(combinedCart.length, (index) {
+                            final item = combinedCart[index];
+                            final qty = int.tryParse(item['qty'].toString()) ?? 0;
+
+                            return Column(
                               children: [
-                                Text(
-                                  item['name'],
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: AppColors.black,
-                                      fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.asset(
+                                        item['image'],
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item['name'] ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "${item['price']}/-",
+                                                style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.primary),
+                                              ),
+                                              item['type'] == 'liquor'
+                                                  ? Row(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.grey.shade200,
+                                                    ),
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.remove),
+                                                      onPressed: () => liquorController.removeItem(item['category']),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                    child: Text(
+                                                      "${(item['small'] ?? 0) + (item['large'] ?? 0)}",
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.grey.shade200,
+                                                    ),
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.add),
+                                                      onPressed: () => liquorController.addItem(item['category']),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                                  : Row(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.grey.shade200,
+                                                    ),
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.remove),
+                                                      onPressed: () => controller.updateQty(index, -1, ''),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                    child: Text(
+                                                      "$qty",
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.grey.shade200,
+                                                    ),
+                                                    child: IconButton(
+                                                      icon: const Icon(Icons.add),
+                                                      onPressed: () => controller.updateQty(index, 1, ''),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                child: Text(
+                                                  item['type'] == 'liquor'
+                                                      ? "Small: ${item['small'] ?? 0}  Large: ${item['large'] ?? 0}"
+                                                      : "Qty: ${item['qty'] ?? 0}",
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete, color: Colors.red),
+                                                onPressed: () {
+                                                  if (item['type'] == 'liquor') {
+                                                    liquorController.removeItem(item['category']);
+                                                  } else {
+                                                    controller.removeItem(index);
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 6),
-                                item['type'] == 'liquor'
-                                    ? Text(
-                                  "Small: ${item['small']} | Large: ${item['large']}",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.primary),
-                                )
-                                    : Text(
-                                  "Qty: ${item['qty']}",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.primary),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "${item['price']}/-",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary),
-                                ),
+                                if (index < combinedCart.length - 1)
+                                  const Divider(thickness: 1),
                               ],
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey.shade300,
-                                        shape: BoxShape.circle),
-                                    child: IconButton(
-                                      icon: Icon(Icons.remove, color: Colors.black),
-                                      onPressed: () {
-                                        if (item['type'] == 'liquor') {
-                                          liquorController.removeItem(item['category']);
-                                        } else {
-                                          controller.updateQty(index, -1, '');
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey.shade300,
-                                        shape: BoxShape.circle),
-                                    child: IconButton(
-                                      icon: Icon(Icons.add, color: Colors.black),
-                                      onPressed: () {
-                                        if (item['type'] == 'liquor') {
-                                          liquorController.addItem(item['category']);
-                                        } else {
-                                          controller.updateQty(index, 1, '');
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {
-                                  if (item['type'] == 'liquor') {
-                                    liquorController.removeItem(item['category']);
-                                  } else {
-                                    controller.removeItem(index);
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                            );
+                          }),
+                        ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
+            // Bottom Section moved above nav bar
             Positioned(
               left: 0,
               right: 0,
               bottom: 70,
               child: Obx(() {
                 int total = controller.getTotalPrice() + liquorController.getTotalPrice();
-                if (total == 0) return SizedBox.shrink();
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                  ),
+                      color: Colors.white,
+                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Total: ₹$total/-",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary),
                       ),
                       Container(
+                        width: 120,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
-                              AppColors.khakiLight,
+                              AppColors.khaki,
                               AppColors.primary,
                               AppColors.secondary
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(15),
                         ),
+
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                          ),
-                          onPressed: () async {
-                            final balanceString = homeController.balance.value
-                                .replaceAll(RegExp(r'[^0-9]'), '');
-                            final balance = int.tryParse(balanceString) ?? 0;
-
-                            if (total > balance) {
-
-
-
-
-                              Get.snackbar(
-                                "Error",
-                                "You don't have sufficient balance.",
-                                backgroundColor: AppColors.primary,
-                                colorText: AppColors.white,
-                                snackPosition: SnackPosition.BOTTOM,
-                                borderColor: Colors.red,
-                                borderWidth: 2,
-                              );
+                              backgroundColor: AppColors.transparent,
+                              foregroundColor: AppColors.transparent,
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          onPressed: () {
+                            CustomSnackBar.show(
+                              title: "Reorder Placed",
+                              message: "Your order has been reordered successfully!",
+                              icon: Icons.check_circle,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                              // durationSeconds: 4, // optional
+                            );
 
 
 
 
-                            } else {
-                              await controller.saveCart();
-                              await liquorController.saveCart();
-
-                              final prefs = await SharedPreferences.getInstance();
-                              await prefs.setString(
-                                  "cart_items", jsonEncode(controller.cartItems));
-                              await prefs.setString(
-                                  "liquor_cart_items", jsonEncode(liquorController.cartItems));
-
-                              Get.snackbar(
-                                "Order",
-                                "Your order ready in 5 minutes!",
-                                backgroundColor: AppColors.primary,
-                                colorText: AppColors.golden,
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            }
                           },
-                          child: Text(
-                            "RESET ODER",
-                            style: TextStyle(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.bold),
+                          child: const Text(
+                            "Reorder",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: AppColors.white),
                           ),
                         ),
                       ),

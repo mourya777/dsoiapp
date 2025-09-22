@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ScreenPage/PinSetPage.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/SnackBarMessage.dart';
 
 class LoginController extends GetxController {
   var mobileController = TextEditingController();
@@ -10,22 +11,33 @@ class LoginController extends GetxController {
   void sendOTP(BuildContext context) {
     String mobile = mobileController.text.trim();
 
-    // ✅ Mobile number validation (only 10 digits allowed)
     if (mobile.isEmpty || mobile.length != 10 || !RegExp(r'^[0-9]{10}$').hasMatch(mobile)) {
-      Get.snackbar(
-        "Error",
-        "Please enter a valid 10-digit mobile number",
-        backgroundColor: AppColors.primary,
-        colorText: AppColors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        borderColor: AppColors.red,
-        borderWidth: 2, // border ki thickness
+      CustomSnackBar.show(
+        title: "Error",
+        message: "Please enter a valid 10-digit mobile number!",
+        icon: Icons.close,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        iconColor: Colors.white,
       );
 
+
+
       return;
+    }else{
+      CustomSnackBar.show(
+        title: "Success",
+        message: "You have logged in successfully!",
+        icon: Icons.check_circle,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        iconColor: Colors.white,
+        // durationSeconds: 4, // optional
+      );
+
     }
 
-    // simulate API call
+
     isLoading.value = true;
     Future.delayed(const Duration(seconds: 2), () {
       isLoading.value = false;
@@ -74,7 +86,7 @@ class LoginController extends GetxController {
                           ],
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close, color: AppColors.red),
+                          icon: const Icon(Icons.close, color: AppColors.red,size: 35,),
                           onPressed: () => Get.back(),
                         ),
                       ],
@@ -119,8 +131,30 @@ class LoginController extends GetxController {
                       ),
                       child: ElevatedButton(
                         onPressed: () {
-                          Get.back();
-                          Get.to(() => PinSetupPage());
+                          if(otpController.text.isNotEmpty && otpController.text!=null){
+                            CustomSnackBar.show(
+                              title: "Success",
+                              message: "You have verified OTP successfully!",
+                              icon: Icons.check_circle,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                              // durationSeconds: 4, // optional
+                            );
+                           Get.back();
+
+                           Get.to(() => PinSetupPage());
+                          }else{
+                            CustomSnackBar.show(
+                              title: "Error",
+                              message: "Please enter a valid 6-digit OTP!",
+                              icon: Icons.close,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                            );
+                          }
+
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,

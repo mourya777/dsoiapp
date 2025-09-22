@@ -11,20 +11,18 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size=MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AdvancedAppBar(),
-    
-    
       backgroundColor: AppColors.white,
       body: Container(
-        height: size.height*1,
+        height: size.height * 1,
         color: AppColors.primary.withOpacity(0.2),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              SizedBox(height: 15,),
+              /// Profile Card
               Obx(() => Container(
                 padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
@@ -43,7 +41,6 @@ class HomePage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        // Profile Image
                         CircleAvatar(
                           radius: 35,
                           backgroundColor: Colors.deepPurple.shade100,
@@ -106,10 +103,7 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const Divider(
-                      color: AppColors.khakiLight,
-                      thickness: 1,
-                    ),
+                    const Divider(color: AppColors.khakiLight, thickness: 1),
                     const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,6 +149,7 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 16),
 
+              /// Recent Transaction
               Obx(() => Container(
                 width: double.infinity,
                 margin: const EdgeInsets.all(0),
@@ -174,8 +169,7 @@ class HomePage extends StatelessWidget {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     dividerColor: Colors.transparent,
-                    expansionTileTheme:
-                    const ExpansionTileThemeData(
+                    expansionTileTheme: const ExpansionTileThemeData(
                       iconColor: AppColors.grey,
                       collapsedIconColor: AppColors.grey,
                     ),
@@ -208,57 +202,59 @@ class HomePage extends StatelessWidget {
                     children: [
                       const Divider(color: AppColors.khakiLight),
                       ListTile(
-                        leading: Icon(Icons.local_pizza, color: AppColors.primary),
+                        leading: Icon(Icons.local_pizza,
+                            color: AppColors.primary),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Pizza",
-                              style: TextStyle(color: AppColors.black, fontSize: 16),
-                            ),
-                            Text(
-                              "₹200/-",
-                              style: TextStyle(color: AppColors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                          children: const [
+                            Text("Pizza",
+                                style: TextStyle(
+                                    color: AppColors.black, fontSize: 16)),
+                            Text("₹200/-",
+                                style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
                       ListTile(
-                        leading: Icon(Icons.lunch_dining, color: AppColors.primary),
+                        leading: Icon(Icons.lunch_dining,
+                            color: AppColors.primary),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Burger",
-                              style: TextStyle(color: AppColors.black, fontSize: 16),
-                            ),
-                            Text(
-                              "₹150/-",
-                              style: TextStyle(color: AppColors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                          children: const [
+                            Text("Burger",
+                                style: TextStyle(
+                                    color: AppColors.black, fontSize: 16)),
+                            Text("₹150/-",
+                                style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
                       ListTile(
-                        leading: Icon(Icons.local_drink, color: AppColors.primary),
+                        leading: Icon(Icons.local_drink,
+                            color: AppColors.primary),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Cold Drink",
-                              style: TextStyle(color: AppColors.black, fontSize: 16),
-                            ),
-                            Text(
-                              "₹150/-",
-                              style: TextStyle(color: AppColors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                          children: const [
+                            Text("Cold Drink",
+                                style: TextStyle(
+                                    color: AppColors.black, fontSize: 16)),
+                            Text("₹150/-",
+                                style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
-
                       Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 10, right: 12),
+                        padding:
+                        const EdgeInsets.only(bottom: 10, right: 12),
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
@@ -275,34 +271,59 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               )),
+
               const SizedBox(height: 16),
 
-              TextButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              /// ✅ Button with condition
+              Obx(() {
+                bool hasMore = controller.transactions.length > 5;
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 12),
+                    ),
+                    onPressed: () {
+                      if (hasMore) {
+                        Get.snackbar(
+                          "Info",
+                          "Showing all transactions",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: AppColors.primary,
+                          colorText: AppColors.white,
+                        );
+                      } else {
+                        Get.snackbar(
+                          "Info",
+                          "No more transactions available",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: AppColors.primary,
+                          colorText: AppColors.white,
+                        );
+                      }
+                    },
+                    icon: Icon(
+                      hasMore ? Icons.arrow_forward_ios : Icons.block,
+                      size: 18,
+                      color: AppColors.black,
+                    ),
+                    label: Text(
+                      hasMore ? "VIEW ALL" : "VIEW MORE",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.black,
+                      ),
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                onPressed: () {
-                  Get.snackbar(
-                    "Info",
-                    "No more transactions available",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: AppColors.primary,
-                    colorText: AppColors.white,
-                  );
-                },
-                child: const Text(
-                  "NO MORE",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.black),
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),

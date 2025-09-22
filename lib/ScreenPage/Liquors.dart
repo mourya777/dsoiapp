@@ -7,6 +7,8 @@ import '../ControllerPage/HomeController.dart';
 import 'package:flutter/material.dart';
 
 import '../wedgetPage/AppBar.dart';
+import '../wedgetPage/SnackBarMessage.dart';
+import 'BillingPage.dart';
 
 class LiquorPage extends StatelessWidget {
 
@@ -101,18 +103,24 @@ class LiquorPage extends StatelessWidget {
                                             value: index,
                                             child: Text(
                                               controller.liquorData[cat]![index]['name'] as String,
-                                              style: const TextStyle(color: AppColors.golden),
+                                              style: const TextStyle(color: AppColors.black),
                                             ),
                                           ),
                                         ),
                                         onChanged: (val) {
                                           if (stock < 10) {
-                                            Get.snackbar(
-                                                "Error",
-                                                "This brand not available",
-                                                backgroundColor: Colors.red,
-                                                colorText: Colors.white,
-                                                snackPosition: SnackPosition.BOTTOM);
+                                            CustomSnackBar.show(
+                                              title: "Error",
+                                              message: "This brand not available!",
+                                              icon: Icons.close,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              iconColor: Colors.white,
+                                            );
+
+
+
+
                                           } else {
                                             controller.selectedTypeIndex[cat] = val ?? 0;
                                           }
@@ -149,12 +157,66 @@ class LiquorPage extends StatelessWidget {
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
-                                                  color: AppColors.golden)),
+                                                  color: AppColors.black)),
                                           const SizedBox(height: 6),
-                                          Text("Price: ₹${item['price']}/-",
-                                              style: const TextStyle(
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // ✅ Added alignment
+                                            children: [
+                                              Text(
+                                                "₹${item['price']}/-",
+                                                style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: AppColors.primary)),
+                                                  color: AppColors.primary,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey.shade200,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        controller.removeItem(cat);
+                                                      },
+                                                      icon: const Icon(Icons.remove, color: Colors.black),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 6),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey.shade200,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        if (stock < 10) {
+
+                                                          CustomSnackBar.show(
+                                                            title: "Error",
+                                                            message: "This brand not available!",
+                                                            icon: Icons.close,
+                                                            backgroundColor: Colors.red,
+                                                            textColor: Colors.white,
+                                                            iconColor: Colors.white,
+                                                          );
+
+
+                                                        } else {
+                                                          controller.addItem(cat);
+                                                        }
+                                                      },
+                                                      icon: const Icon(Icons.add, color: Colors.black),
+                                                    ),
+                                                  ),
+
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
                                           const SizedBox(height: 6),
                                           Text(
                                               "Small: ${controller.getSmall(cat)}   Large: ${controller.getLarge(cat)}",
@@ -164,42 +226,6 @@ class LiquorPage extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey.shade200,
-                                              shape: BoxShape.circle),
-                                          child: IconButton(
-                                            onPressed: () {
-                                              if (stock < 10) {
-                                                Get.snackbar(
-                                                    "Error",
-                                                    "This brand not available",
-                                                    backgroundColor: Colors.red,
-                                                    colorText: Colors.white,
-                                                    snackPosition: SnackPosition.BOTTOM);
-                                              } else {
-                                                controller.addItem(cat);
-                                              }
-                                            },
-                                            icon: const Icon(Icons.add, color: Colors.black),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey.shade200,
-                                              shape: BoxShape.circle),
-                                          child: IconButton(
-                                            onPressed: () {
-                                              controller.removeItem(cat);
-                                            },
-                                            icon: const Icon(Icons.remove, color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    )
                                   ],
                                 ),
                               ],
@@ -241,7 +267,7 @@ class LiquorPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
 
-                child: ElevatedButton(
+                child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -255,34 +281,46 @@ class LiquorPage extends StatelessWidget {
                     final total = controller.getTotalPrice();
 
                     if (total > balance) {
-                      Get.snackbar(
-                        "Error",
-                        "You don't have sufficient balance.",
-                        backgroundColor: AppColors.primary,
-                        colorText: AppColors.golden,
-                        snackPosition: SnackPosition.BOTTOM,
+
+                      CustomSnackBar.show(
+                        title: "Error",
+                        message: "You don't have sufficient balance!",
+                        icon: Icons.close,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        iconColor: Colors.white,
                       );
+
+
+
+
+
+
                     } else {
-                      // Save cart normally
+                      // Save liquor cart separately
                       await controller.saveCart();
 
-                      // Save liquor items in a separate SharedPreferences key
-                      final prefs = await SharedPreferences.getInstance();
-                      final liquorItems = controller.cartItems.where((item) => item['type'] == 'liquor').toList();
-                      await prefs.setString("liquor_cart_items", jsonEncode(liquorItems));
-
-                      Get.snackbar(
-                        "Success",
-                        "Order placed successfully!",
-                        backgroundColor: AppColors.primary,
-                        colorText: AppColors.golden,
-                        snackPosition: SnackPosition.BOTTOM,
+                      CustomSnackBar.show(
+                        title: "Success",
+                        message: "Liquor items added to cart successfully!",
+                        icon: Icons.check_circle,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                        iconColor: Colors.white,
+                        // durationSeconds: 4, // optional
                       );
+
+
+
+
+
+
+                      Get.to(BillingPage());
                     }
                   },
+                  child: Text("Checkout", style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold)),
+                )
 
-                  child: Text("Checkout", style: TextStyle(color: AppColors.golden, fontWeight: FontWeight.bold)),
-                ),
               ),
             ],
           ),

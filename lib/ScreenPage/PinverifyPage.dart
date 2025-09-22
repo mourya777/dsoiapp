@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/SnackBarMessage.dart';
 import 'buttombarPage.dart';
 import 'PinSetPage.dart';
 
@@ -111,15 +112,17 @@ class PinVerifyPage extends StatelessWidget {
                       if (verifyPinController.text == pin) {
                         Get.offAll(() => BottomNavPage());
                       } else {
-                        Get.snackbar(
-                          "Error",
-                          "Incorrect PIN",
-                          backgroundColor: AppColors.primary,
-                          colorText: AppColors.white,
-                          snackPosition: SnackPosition.BOTTOM,
-                          borderColor: Colors.red,
-                          borderWidth: 2,
+                        CustomSnackBar.show(
+                          title: "Error",
+                          message: "Incorrect PIN",
+                          icon: Icons.close,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          iconColor: Colors.white,
                         );
+
+
+
                       }
                     },
                     style: ElevatedButton.styleFrom(

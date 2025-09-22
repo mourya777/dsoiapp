@@ -15,16 +15,35 @@ class MenuView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AdvancedAppBar(),
-
       backgroundColor: AppColors.white,
       body: Obx(() {
         return Container(
           color: AppColors.primary.withOpacity(0.5),
           child: ListView.builder(
-            padding: EdgeInsets.only( left: 16, right: 16),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 8),
             itemCount: controller.menuCards.length,
             itemBuilder: (context, index) {
               final card = controller.menuCards[index];
+
+              int itemCount = 0;
+              switch (card.name) {
+                case "Vegetarian":
+                  itemCount = controller.vegItems.length;
+                  break;
+                case "Non-Vegetarian":
+                  itemCount = controller.nonVegItems.length;
+                  break;
+                case "Snack":
+                  itemCount = controller.snacks.length;
+                  break;
+                case "Drinks":
+                  itemCount = controller.drinks.length;
+                  break;
+                case "Liquors":
+                  itemCount = 0; // Or any number if needed
+                  break;
+              }
+
               return GestureDetector(
                 onTap: () {
                   if (index == controller.menuCards.length - 1) {
@@ -35,38 +54,41 @@ class MenuView extends StatelessWidget {
                   }
                 },
                 child: Card(
-                  margin: EdgeInsets.symmetric(vertical: 10),
+                  margin: EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   elevation: 5,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
+                  child: Container(
+                    height: 120,
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: Container(
-                            width: 120,
-                            height: 120,
+                            width: 100,
+                            height: 100,
                             color: Colors.grey[200],
                             child: Image.asset(
                               card.image,
-                              fit: BoxFit.contain, // ensures full image visible
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 20),
-                      Expanded(
-                        child: Text(
-                          card.name,
-                          style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            card.name,
+                            style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                    ],
+                        // Circle showing item count
+                        const SizedBox(width: 8),
+                      ],
+                    ),
                   ),
                 ),
               );

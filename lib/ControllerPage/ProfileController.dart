@@ -4,6 +4,7 @@ import '../ControllerPage/HomeController.dart';
 import '../ControllerPage/SplashController.dart';
 import '../ScreenPage/splashPage.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/SnackBarMessage.dart';
 
 class ProfileController extends GetxController {
   final homeController = Get.put(HomeController());
@@ -47,7 +48,7 @@ class ProfileController extends GetxController {
                       icon: const Icon(
                         Icons.close,
                         color: Colors.red,
-                        size: 20,
+                        size: 35,
                       ),
                     ),
 
@@ -206,7 +207,7 @@ class ProfileController extends GetxController {
                         icon: const Icon(
                           Icons.close,
                           color: Colors.red,
-                          size: 20,
+                          size: 35,
                         ),
                       ),
                     ],
@@ -242,29 +243,82 @@ class ProfileController extends GetxController {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
+                        // onPressed: () {
+                        //   if (newPin.text == confirmPin.text &&
+                        //       oldPin.text.isNotEmpty) {
+                        //     Get.back();
+                        //     Get.snackbar(
+                        //       "Success",
+                        //       "PIN reset successfully",
+                        //       snackPosition: SnackPosition.BOTTOM,
+                        //       backgroundColor: AppColors.primary,
+                        //       colorText: AppColors.white,
+                        //     );
+                        //   } else {
+                        //     Get.snackbar(
+                        //       "Error",
+                        //       "PIN mismatch or empty",
+                        //       snackPosition: SnackPosition.BOTTOM,
+                        //       backgroundColor: AppColors.primary,
+                        //       colorText: Colors.white,
+                        //       borderColor: Colors.red,
+                        //       borderWidth: 2,
+                        //     );
+                        //   }
+                        // },
                         onPressed: () {
-                          if (newPin.text == confirmPin.text &&
-                              oldPin.text.isNotEmpty) {
-                            Get.back();
-                            Get.snackbar(
-                              "Success",
-                              "PIN reset successfully",
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: AppColors.khakiLight,
-                              colorText: AppColors.golden,
+                          if (oldPin.text.isEmpty || newPin.text.isEmpty || confirmPin.text.isEmpty) {
+                            CustomSnackBar.show(
+                              title: "Error",
+                              message: "All fields are required!",
+                              icon: Icons.close,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
                             );
+
+
+
+
+                          } else if (newPin.text.length != 6 || confirmPin.text.length != 6 || oldPin.text.length != 6) {
+                            CustomSnackBar.show(
+                              title: "Error",
+                              message: "PIN must be exactly 6 digits!",
+                              icon: Icons.close,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                            );
+
+
+                          } else if (newPin.text != confirmPin.text) {
+                            CustomSnackBar.show(
+                              title: "Error",
+                              message: "New PIN and Confirm PIN do not match!",
+                              icon: Icons.close,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                            );
+
                           } else {
-                            Get.snackbar(
-                              "Error",
-                              "PIN mismatch or empty",
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: AppColors.primary,
-                              colorText: Colors.white,
-                              borderColor: Colors.redAccent,
-                              borderWidth: 2,
+                            Get.offAll(SplashScreen());
+                            CustomSnackBar.show(
+                              title: "Success",
+                              message: "PIN reset successfully!",
+                              icon: Icons.check_circle,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                              // durationSeconds: 4, // optional
                             );
+
+
+
+
                           }
                         },
+
                         child: const Text("RESET PIN",
                             style: TextStyle(
                                 fontSize: 18,

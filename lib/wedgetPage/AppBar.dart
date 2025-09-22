@@ -11,12 +11,13 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height*0.2,
+      height: MediaQuery.of(context).size.height * 0.12, // पहले 0.2 था, अब कम किया
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
             AppColors.primary,
-            AppColors.primary],
+            AppColors.primary
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -31,7 +32,7 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child:Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
@@ -39,7 +40,7 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
                 height: 60,
                 width: 60,
               ),
-              SizedBox(width: 6,),
+              const SizedBox(width: 10),
               Text(
                 "DSOI JABALPUR",
                 style: TextStyle(
@@ -50,8 +51,7 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
                 overflow: TextOverflow.ellipsis, // Prevent overflow
               ),
             ],
-          )
-          ,
+          ),
         ),
       ),
     );

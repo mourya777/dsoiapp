@@ -58,17 +58,7 @@ class _BottomNavPageState extends State<BottomNavPage> {
           animationDuration: const Duration(milliseconds: 300),
           animationCurve: Curves.easeInOut,
           items: List.generate(items.length, (index) {
-            final isActive = index == _currentIndex;
             return Container(
-              decoration: isActive
-                  ? BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.golden, // Golden circle
-                  width: 3,
-                ),
-              )
-                  : null,
               padding: const EdgeInsets.all(8),
               child: items[index],
             );

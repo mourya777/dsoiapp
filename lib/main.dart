@@ -3,6 +3,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 
 import 'ScreenPage/LoginPage.dart';
+import 'ScreenPage/ManuPage.dart';
 import 'ScreenPage/PinSetPage.dart';
 import 'ScreenPage/PinverifyPage.dart';
 import 'ScreenPage/buttombarPage.dart';

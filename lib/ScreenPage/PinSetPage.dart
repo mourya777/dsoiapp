@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/SnackBarMessage.dart';
 import 'PinverifyPage.dart';
 
 class PinSetupPage extends StatelessWidget {
@@ -119,15 +120,19 @@ class PinSetupPage extends StatelessWidget {
                           pinController.text.length == 6) {
                         Get.to(() => PinVerifyPage(pin: pinController.text));
                       } else {
-                        Get.snackbar(
-                          "Error",
-                          "PIN must be 6 digits & match",
-                          backgroundColor: AppColors.primary,
-                          colorText: AppColors.white,
-                          snackPosition: SnackPosition.BOTTOM,
-                          borderColor: Colors.red,
-                          borderWidth: 2,
+
+                        CustomSnackBar.show(
+                          title: "Error",
+                          message: "PIN must be 6 digits & match",
+                          icon: Icons.close,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          iconColor: Colors.white,
                         );
+
+
+
+
                       }
                     },
                     style: ElevatedButton.styleFrom(

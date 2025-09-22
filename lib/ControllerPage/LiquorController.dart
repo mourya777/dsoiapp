@@ -2,10 +2,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-
 class LiquorController extends GetxController {
   final RxList<String> categories =
       <String>["Whisky", "Rum", "Vodka", "Brandy", "Gin"].obs;
@@ -26,25 +22,25 @@ class LiquorController extends GetxController {
       {"name": "McDowell’s No.1 Rum", "price": 180, "image": "Assets/Liquor/McDowell’s No.1 Rum .jpeg"},
     ],
     "Vodka": [
-      {"name": "Smirnoff", "price": 1200, "image": "Assets/Liquor/Smirnoff.jpeg"},
-      {"name": "Romanov", "price": 1180, "image": "Assets/Liquor/Romanov .jpeg"},
-      {"name": "Absolut", "price": 1300, "image": "Assets/Liquor/Absolut .jpeg"},
-      {"name": "Magic Moments", "price": 1220, "image": "Assets/Liquor/Magic Moments .jpeg"},
+      {"name": "Smirnoff", "price": 200, "image": "Assets/Liquor/Smirnoff.jpeg"},
+      {"name": "Romanov", "price": 180, "image": "Assets/Liquor/Romanov .jpeg"},
+      {"name": "Absolut", "price": 300, "image": "Assets/Liquor/Absolut .jpeg"},
+      {"name": "Magic Moments", "price": 220, "image": "Assets/Liquor/Magic Moments .jpeg"},
       {"name": "White Mischief", "price": 1150, "image": "Assets/Liquor/White Mischief.jpeg"},
     ],
     "Brandy": [
-      {"name": "Old Admiral", "price": 1180, "image": "Assets/Liquor/Old Admiral .jpeg"},
-      {"name": "Mansion House", "price": 1220, "image": "Assets/Liquor/Mansion House .jpeg"},
-      {"name": "Contessa", "price": 1250, "image": "Assets/Liquor/Contessa.jpeg"},
-      {"name": "Honey Bee", "price": 1200, "image": "Assets/Liquor/HoneyBee.jpeg"},
-      {"name": "Bacardi Brandy", "price": 1280, "image": "Assets/Liquor/Bacardi Brandy .jpeg"},
+      {"name": "Old Admiral", "price": 180, "image": "Assets/Liquor/Old Admiral .jpeg"},
+      {"name": "Mansion House", "price": 220, "image": "Assets/Liquor/Mansion House .jpeg"},
+      {"name": "Contessa", "price": 250, "image": "Assets/Liquor/Contessa.jpeg"},
+      {"name": "Honey Bee", "price": 200, "image": "Assets/Liquor/HoneyBee.jpeg"},
+      {"name": "Bacardi Brandy", "price": 280, "image": "Assets/Liquor/Bacardi Brandy .jpeg"},
     ],
     "Gin": [
-      {"name": "Blue Riband", "price": 1180, "image": "Assets/Liquor/Blue Riband.jpeg"},
-      {"name": "Greater Than", "price": 1250, "image": "Assets/Liquor/Greater Than .jpeg"},
-      {"name": "Bombay Sapphire", "price": 1300, "image": "Assets/Liquor/Bombay Sapphire.jpeg"},
-      {"name": "Hapusa", "price": 1220, "image": "Assets/Liquor/Hapusa .jpeg"},
-      {"name": "Tanqueray", "price": 1350, "image": "Assets/Liquor/Tanqueray .jpeg"},
+      {"name": "Blue Riband", "price": 180, "image": "Assets/Liquor/Blue Riband.jpeg"},
+      {"name": "Greater Than", "price": 250, "image": "Assets/Liquor/Greater Than .jpeg"},
+      {"name": "Bombay Sapphire", "price": 300, "image": "Assets/Liquor/Bombay Sapphire.jpeg"},
+      {"name": "Hapusa", "price": 220, "image": "Assets/Liquor/Hapusa .jpeg"},
+      {"name": "Tanqueray", "price": 350, "image": "Assets/Liquor/Tanqueray .jpeg"},
     ],
   };
 
@@ -127,20 +123,13 @@ class LiquorController extends GetxController {
 
   Future<void> saveCart() async {
     final prefs = await SharedPreferences.getInstance();
-
-    // पहले से save data निकालो
-    final existingData = prefs.getString("cart_items");
-    List<Map<String, dynamic>> existingCart = [];
-    if (existingData != null) {
-      existingCart = List<Map<String, dynamic>>.from(jsonDecode(existingData));
-    }
-
-    // Liquor की नई values बनाओ
     List<Map<String, dynamic>> newLiquorItems = [];
+
     for (var cat in categories) {
       var item = getCurrentItem(cat);
       int small = getSmall(cat);
       int large = getLarge(cat);
+
       if (small > 0 || large > 0) {
         newLiquorItems.add({
           "category": cat,
@@ -155,27 +144,25 @@ class LiquorController extends GetxController {
       }
     }
 
-    existingCart.removeWhere((item) => item["type"] == "liquor");
+    // Remove previous liquor items and add new ones
+    final existingData = prefs.getString("liquor_cart_items");
+    List<Map<String, dynamic>> existingCart = [];
+    if (existingData != null) {
+      existingCart = List<Map<String, dynamic>>.from(jsonDecode(existingData));
+      existingCart.removeWhere((item) => item["type"] == "liquor");
+    }
 
     existingCart.addAll(newLiquorItems);
-
-    // update local cartItems
     cartItems.value = existingCart;
 
-    // SharedPreferences में save
-    await prefs.setString("cart_items", jsonEncode(existingCart));
+    await prefs.setString("liquor_cart_items", jsonEncode(existingCart));
   }
 
   Future<void> loadCart() async {
     final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString("cart_items");
+    final data = prefs.getString("liquor_cart_items");
     if (data != null) {
       cartItems.value = List<Map<String, dynamic>>.from(jsonDecode(data));
     }
   }
 }
-
-
-
-
-
