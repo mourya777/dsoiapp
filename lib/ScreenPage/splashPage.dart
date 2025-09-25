@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/SplashController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class SplashScreen extends StatelessWidget {
               ),
 
               Text(
-                "DSOI JABALPUR",
+                "${AppStrings.locationmhow}",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,

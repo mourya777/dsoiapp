@@ -5,7 +5,7 @@
 
 
     <application
-        android:label="DSOI"
+        android:label="DSOMI"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -4,12 +4,12 @@ import '../ControllerPage/HomeController.dart';
 import '../ControllerPage/SplashController.dart';
 import '../ScreenPage/splashPage.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/SessionManager.dart';
 import '../wedgetPage/SnackBarMessage.dart';
 
 class ProfileController extends GetxController {
   final homeController = Get.put(HomeController());
 
-  // 🔹 Show User Details
   void showUserDetailsSheet(BuildContext context) {
     Get.bottomSheet(
       Stack(
@@ -23,7 +23,9 @@ class ProfileController extends GetxController {
             ),
             decoration: BoxDecoration(
               color: AppColors.white,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(25),
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -38,12 +40,14 @@ class ProfileController extends GetxController {
                         Text(
                           "DETAILS",
                           style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.black),
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.black,
+                          ),
                         ),
                       ],
-                    ),          IconButton(
+                    ),
+                    IconButton(
                       onPressed: () => Get.back(),
                       icon: const Icon(
                         Icons.close,
@@ -51,18 +55,52 @@ class ProfileController extends GetxController {
                         size: 35,
                       ),
                     ),
-
                   ],
                 ),
                 const SizedBox(height: 20),
 
-                // User detail rows
-                Obx(() => _buildDetailRowWithIcon(Icons.account_circle, "Name", homeController.memberName.value)),
-                Obx(() => _buildDetailRowWithIcon(Icons.confirmation_num, "Membership No", homeController.membershipNo.value)),
-                Obx(() => _buildDetailRowWithIcon(Icons.group, "Member Type", homeController.memberType.value)),
-                Obx(() => _buildDetailRowWithIcon(Icons.location_on, "Location", homeController.location.value)),
-                Obx(() => _buildDetailRowWithIcon(Icons.phone, "Mobile No", homeController.mobileNo.value)),
-                Obx(() => _buildDetailRowWithIcon(Icons.account_balance_wallet, "Balance", homeController.balance.value)),
+                Obx(
+                  () => _buildDetailRowWithIcon(
+                    Icons.account_circle,
+                    "Name",
+                    homeController.memberName.value,
+                  ),
+                ),
+                Obx(
+                  () => _buildDetailRowWithIcon(
+                    Icons.confirmation_num,
+                    "Membership No",
+                    homeController.membershipNo.value,
+                  ),
+                ),
+                Obx(
+                  () => _buildDetailRowWithIcon(
+                    Icons.group,
+                    "Member Type",
+                    homeController.memberType.value,
+                  ),
+                ),
+                Obx(
+                  () => _buildDetailRowWithIcon(
+                    Icons.location_on,
+                    "Location",
+                    homeController.location.value,
+                  ),
+                ),
+                Obx(
+                  () => _buildDetailRowWithIcon(
+                    Icons.phone,
+                    "Mobile No",
+                    homeController.mobileNo.value,
+                  ),
+                ),
+                Obx(
+                  () => _buildDetailRowWithIcon(
+                    Icons.account_balance_wallet,
+                    "Balance",
+                    homeController.balance.value,
+                  ),
+                ),
 
                 const SizedBox(height: 25),
 
@@ -70,14 +108,12 @@ class ProfileController extends GetxController {
               ],
             ),
           ),
-
         ],
       ),
       isScrollControlled: true,
     );
   }
 
-  // 🔹 Show Logout Confirmation
   void showLogoutConfirmation(BuildContext context) {
     Get.dialog(
       Dialog(
@@ -99,9 +135,10 @@ class ProfileController extends GetxController {
                   Text(
                     "LOGOUT",
                     style: TextStyle(
-                        color: AppColors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22),
+                      color: AppColors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
                   ),
                 ],
               ),
@@ -121,7 +158,8 @@ class ProfileController extends GetxController {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     onPressed: () {
                       Get.back();
@@ -137,11 +175,16 @@ class ProfileController extends GetxController {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       Get.back();
+                      Get.back(); // Close dialog
+                      await SessionManager.logout();
+
                       Get.delete<SplashController>();
+
                       Get.offAll(() => SplashScreen());
                     },
                     label: const Text(
@@ -150,7 +193,7 @@ class ProfileController extends GetxController {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -177,8 +220,9 @@ class ProfileController extends GetxController {
               ),
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(25)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(25),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -190,8 +234,12 @@ class ProfileController extends GetxController {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Icon(Icons.lock_reset,color: AppColors.primary,size: 35,),
-                          SizedBox(width: 8,),
+                          Icon(
+                            Icons.lock_reset,
+                            color: AppColors.primary,
+                            size: 35,
+                          ),
+                          SizedBox(width: 8),
                           Text(
                             "RESET PIN",
                             style: TextStyle(
@@ -203,7 +251,7 @@ class ProfileController extends GetxController {
                         ],
                       ),
                       IconButton(
-                        onPressed: ()=> Get.back(),
+                        onPressed: () => Get.back(),
                         icon: const Icon(
                           Icons.close,
                           color: Colors.red,
@@ -227,7 +275,7 @@ class ProfileController extends GetxController {
                           colors: [
                             AppColors.khakiLight,
                             AppColors.primary,
-                            AppColors.secondary
+                            AppColors.secondary,
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -267,7 +315,9 @@ class ProfileController extends GetxController {
                         //   }
                         // },
                         onPressed: () {
-                          if (oldPin.text.isEmpty || newPin.text.isEmpty || confirmPin.text.isEmpty) {
+                          if (oldPin.text.isEmpty ||
+                              newPin.text.isEmpty ||
+                              confirmPin.text.isEmpty) {
                             CustomSnackBar.show(
                               title: "Error",
                               message: "All fields are required!",
@@ -276,11 +326,9 @@ class ProfileController extends GetxController {
                               textColor: Colors.white,
                               iconColor: Colors.white,
                             );
-
-
-
-
-                          } else if (newPin.text.length != 6 || confirmPin.text.length != 6 || oldPin.text.length != 6) {
+                          } else if (newPin.text.length != 6 ||
+                              confirmPin.text.length != 6 ||
+                              oldPin.text.length != 6) {
                             CustomSnackBar.show(
                               title: "Error",
                               message: "PIN must be exactly 6 digits!",
@@ -289,8 +337,6 @@ class ProfileController extends GetxController {
                               textColor: Colors.white,
                               iconColor: Colors.white,
                             );
-
-
                           } else if (newPin.text != confirmPin.text) {
                             CustomSnackBar.show(
                               title: "Error",
@@ -300,7 +346,6 @@ class ProfileController extends GetxController {
                               textColor: Colors.white,
                               iconColor: Colors.white,
                             );
-
                           } else {
                             Get.offAll(SplashScreen());
                             CustomSnackBar.show(
@@ -312,18 +357,17 @@ class ProfileController extends GetxController {
                               iconColor: Colors.white,
                               // durationSeconds: 4, // optional
                             );
-
-
-
-
                           }
                         },
 
-                        child: const Text("RESET PIN",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white)),
+                        child: const Text(
+                          "RESET PIN",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -332,7 +376,6 @@ class ProfileController extends GetxController {
               ),
             ),
           ),
-
         ],
       ),
       isScrollControlled: true,
@@ -340,7 +383,11 @@ class ProfileController extends GetxController {
   }
 
   // 🔹 Helper Widgets
-  static Widget _buildDetailRowWithIcon(IconData icon, String title, String value) {
+  static Widget _buildDetailRowWithIcon(
+    IconData icon,
+    String title,
+    String value,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -355,7 +402,11 @@ class ProfileController extends GetxController {
           Expanded(
             child: Text(
               "$title: $value",
-              style: const TextStyle(fontSize: 16, color: AppColors.black, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontSize: 16,
+                color: AppColors.black,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -375,9 +426,7 @@ class ProfileController extends GetxController {
         filled: true,
         fillColor: AppColors.white,
         prefixIcon: const Icon(Icons.lock, color: AppColors.primary),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

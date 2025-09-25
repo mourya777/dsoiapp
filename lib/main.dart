@@ -3,6 +3,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 
 import 'ScreenPage/LoginPage.dart';
+import 'ScreenPage/ManuItemPage.dart';
 import 'ScreenPage/ManuPage.dart';
 import 'ScreenPage/PinSetPage.dart';
 import 'ScreenPage/PinverifyPage.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'DSOI',
+      title: 'DSOMI',
 debugShowCheckedModeBanner: false,
      home:SplashScreen(),
     );

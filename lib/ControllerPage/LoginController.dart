@@ -16,9 +16,9 @@ class LoginController extends GetxController {
         title: "Error",
         message: "Please enter a valid 10-digit mobile number!",
         icon: Icons.close,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        iconColor: Colors.white,
+        backgroundColor: AppColors.red,
+        textColor: AppColors.white,
+        iconColor: AppColors.white,
       );
 
 
@@ -29,9 +29,9 @@ class LoginController extends GetxController {
         title: "Success",
         message: "You have logged in successfully!",
         icon: Icons.check_circle,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        iconColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        textColor: AppColors.white,
+        iconColor: AppColors.white,
         // durationSeconds: 4, // optional
       );
 
