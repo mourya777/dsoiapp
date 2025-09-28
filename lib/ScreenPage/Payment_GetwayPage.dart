@@ -12,9 +12,13 @@ class AddToCartPage extends StatelessWidget {
   AddToCartPage({Key? key}) : super(key: key);
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   final CartController controller = Get.put(CartController());
   final LiquorController liquorController = Get.put(LiquorController());
   final HomeController homeController = Get.put(HomeController());
+=======
+  final ViewCartController controller = Get.put(ViewCartController());
+>>>>>>> Stashed changes
 =======
   final ViewCartController controller = Get.put(ViewCartController());
 >>>>>>> Stashed changes
@@ -30,9 +34,13 @@ class AddToCartPage extends StatelessWidget {
       appBar: AdvancedAppBar(),
       body: Obx(() {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         final combinedCart = [...controller.cartItems, ...liquorController.cartItems];
 
         if (combinedCart.isEmpty) {
+=======
+        if (controller.cartItems.isEmpty) {
+>>>>>>> Stashed changes
 =======
         if (controller.cartItems.isEmpty) {
 >>>>>>> Stashed changes
@@ -44,6 +52,7 @@ class AddToCartPage extends StatelessWidget {
           );
         }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         return Stack(
           children: [
@@ -286,6 +295,8 @@ class AddToCartPage extends StatelessWidget {
             ),
           ],
 =======
+=======
+>>>>>>> Stashed changes
         return ListView.builder(
           padding: const EdgeInsets.all(12),
           itemCount: controller.cartItems.length,
@@ -338,6 +349,9 @@ class AddToCartPage extends StatelessWidget {
               ),
             );
           },
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         );
       }),

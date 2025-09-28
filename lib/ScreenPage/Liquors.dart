@@ -30,8 +30,11 @@ class LiquorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
       appBar: AdvancedAppBar(),
 =======
+=======
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.primary,
@@ -76,6 +79,9 @@ class LiquorPage extends StatelessWidget {
             ),
           ],
         ),
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
+=======
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
       backgroundColor: AppColors.white,
       body:Obx(() {
@@ -231,6 +237,10 @@ class LiquorPage extends StatelessWidget {
 =======
 
 
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+=======
+
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                                                         GlobalCart.cartData[0]["order"].removeWhere(
                                                               (orderItem) => orderItem["prd_id"] == "${item['prd_id']}",
                                                         );
@@ -368,6 +378,7 @@ class LiquorPage extends StatelessWidget {
                       );
 
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 
 
 
@@ -377,13 +388,19 @@ class LiquorPage extends StatelessWidget {
 =======
                       Get.to(() => ViewCartPage());
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
+=======
+                      Get.to(() => ViewCartPage());
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                     }
                   },
                   child: Text("Checkout", style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold)),
                 )
 
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 =======
+=======
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                   child:Row(
                     children: [
                       Icon(

@@ -22,7 +22,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       title: 'DSOI',
+=======
+      title:AppStrings.dsoi,
+>>>>>>> Stashed changes
 =======
       title:AppStrings.dsoi,
 >>>>>>> Stashed changes
