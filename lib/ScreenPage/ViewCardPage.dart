@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ApiControllers/ManuApiControllerPage.dart';
 import '../ApiControllers/OrderNowApiController.dart';
+import '../ControllerPage/LiquorController.dart';
+import '../ControllerPage/ManuitemController.dart';
 import '../ControllerPage/ViewCardController.dart';
 import '../UtilsPage/ColorsPage.dart';
 import '../UtilsPage/SessionManager.dart';
@@ -21,50 +23,50 @@ class ViewCartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.2),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primary,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              'Assets/Images/appbar_logo-removebg-preview.png',
-              height: 50,
-              width: 50,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              "${AppStrings.locationJabalpur}",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w900,
-                color: AppColors.white,
-                letterSpacing: 1.5,
-                shadows: [
-                  Shadow(
-                    offset: Offset(2, 2),
-                    blurRadius: 4,
-                    color: Colors.black26,
-                  ),
-                ],
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: AppColors.primary,
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'Assets/Images/appbar_logo-removebg-preview.png',
+                height: 50,
+                width: 50,
               ),
+              const SizedBox(width: 10),
+              Text(
+                "${AppStrings.locationJabalpur}",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900, // aur bold
+                  color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                  letterSpacing: 1.5, // thoda space letters ke beech
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2, 2),
+                      blurRadius: 4,
+                      color: Colors.black26,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Get.offAll(MenuView());
+                  },
+                  icon: Icon(Icons.menu, color: AppColors.white),
+                ),
+                SizedBox(width: 20),
+              ],
             ),
           ],
         ),
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  Get.offAll(MenuView());
-                },
-                icon: Icon(Icons.menu, color: AppColors.white),
-              ),
-              SizedBox(width: 20),
-            ],
-          ),
-        ],
-      ),
       body: Obx(() {
         if (controller.cartItems.isEmpty) {
           return const Center(child: Text("Your cart is empty"));
@@ -91,6 +93,7 @@ class ViewCartPage extends StatelessWidget {
                       itemCount: controller.cartItems.length,
                       itemBuilder: (context, index) {
                         final item = controller.cartItems[index];
+                        print("kkkkkkkkkkkkkkkkkkkkkkkkkk$item");
                         final isLiquor = item['type'] == 'liquor';
                         int qty = isLiquor
                             ? ((item['small'] ?? 0) + (item['large'] ?? 0))
@@ -135,53 +138,13 @@ class ViewCartPage extends StatelessWidget {
                                       Row(
                                         children: [
                                           IconButton(
-                                            onPressed: () {
-                                              controller.decrementQty(index);
-
-                                              int cartIndex = GlobalCart
-                                                  .cartData[0]["order"]
-                                                  .indexWhere(
-                                                    (e) =>
-                                                        e["prd_id"]
-                                                            .toString() ==
-                                                        item["prd_id"]
-                                                            .toString(),
-                                                  );
-
-                                              if (cartIndex != -1) {
-                                                int currentQty =
-                                                    int.tryParse(
-                                                      GlobalCart
-                                                          .cartData[0]["order"][cartIndex]["qty"],
-                                                    ) ??
-                                                    0;
-
-                                                currentQty -= 1;
-
-                                                if (currentQty <= 0) {
-                                                  GlobalCart
-                                                      .cartData[0]["order"]
-                                                      .removeAt(
-                                                        cartIndex,
-                                                      ); // ❌ remove if 0
-                                                } else {
-                                                  GlobalCart
-                                                          .cartData[0]["order"][cartIndex]["qty"] =
-                                                      "$currentQty";
-                                                }
-                                              }
-
-                                              // ✅ Debug print to check global list
-                                              print(
-                                                "After Decrement: ${GlobalCart.cartData[0]["order"]}",
-                                              );
-                                            },
+                                            onPressed: () =>
+                                                controller.decrementQty(index),
                                             icon: const Icon(
                                               Icons.remove_circle,
                                               color: AppColors.primary,
                                             ),
                                           ),
-
                                           Text(
                                             "$qty",
                                             style: const TextStyle(
@@ -189,119 +152,24 @@ class ViewCartPage extends StatelessWidget {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-
                                           IconButton(
-                                            onPressed: () {
-                                              controller.incrementQty(index);
-
-                                              int cartIndex = GlobalCart
-                                                  .cartData[0]["order"]
-                                                  .indexWhere(
-                                                    (e) =>
-                                                        e["prd_id"]
-                                                            .toString() ==
-                                                        item["prd_id"]
-                                                            .toString(),
-                                                  );
-
-                                              if (item["type"] == "liquor") {
-                                                int smallQty =
-                                                    item["small"] ?? 0;
-                                                int largeQty =
-                                                    item["large"] ?? 0;
-
-                                                if (cartIndex != -1) {
-                                                  GlobalCart
-                                                          .cartData[0]["order"][cartIndex]["qty"] =
-                                                      (smallQty + largeQty)
-                                                          .toString();
-                                                  GlobalCart
-                                                          .cartData[0]["order"][cartIndex]["small"] =
-                                                      smallQty.toString();
-                                                  GlobalCart
-                                                          .cartData[0]["order"][cartIndex]["large"] =
-                                                      largeQty.toString();
-                                                } else {
-                                                  GlobalCart
-                                                      .cartData[0]["order"]
-                                                      .add({
-                                                        "prd_id": item["prd_id"]
-                                                            .toString(),
-                                                        "qty":
-                                                            (smallQty +
-                                                                    largeQty)
-                                                                .toString(),
-                                                        "type": "liquor",
-                                                        "small": smallQty
-                                                            .toString(),
-                                                        "large": largeQty
-                                                            .toString(),
-                                                        "price": item["price"]
-                                                            .toString(),
-                                                      });
-                                                }
-                                              } else {
-                                                if (cartIndex != -1) {
-                                                  int currentQty =
-                                                      int.tryParse(
-                                                        GlobalCart
-                                                            .cartData[0]["order"][cartIndex]["qty"],
-                                                      ) ??
-                                                      0;
-                                                  GlobalCart
-                                                          .cartData[0]["order"][cartIndex]["qty"] =
-                                                      "${currentQty + 1}";
-                                                } else {
-                                                  GlobalCart
-                                                      .cartData[0]["order"]
-                                                      .add({
-                                                        "prd_id": item["prd_id"]
-                                                            .toString(),
-                                                        "qty": "1",
-                                                        "price": item["price"]
-                                                            .toString(),
-                                                      });
-                                                }
-                                              }
-
-                                              // ✅ Debug print to check global list
-                                              print(
-                                                "After Increment: ${GlobalCart.cartData[0]["order"]}",
-                                              );
-                                            },
+                                            onPressed: () =>
+                                                controller.incrementQty(index),
                                             icon: const Icon(
                                               Icons.add_circle,
                                               color: AppColors.primary,
                                             ),
                                           ),
-
                                           const Spacer(),
-
                                           Text(
-                                            "₹${isLiquor ? (((item['small'] ?? 0) + ((item['large'] ?? 0) * 2)) * (double.tryParse(item['price'].toString()) ?? 0)) : ((double.tryParse(item['price'].toString()) ?? 0) * (item['qty'] ?? 1))}/-",
+                                            "₹${isLiquor ? ((item['small'] ?? 0) + (item['large'] ?? 0) * 2) * (double.tryParse(item['price'].toString()) ?? 0) : (double.tryParse(item['price'].toString()) ?? 0) * (item['qty'] ?? 1)}/-",
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-
                                           IconButton(
-                                            onPressed: () {
-                                              controller.deleteItem(index);
-
-                                              GlobalCart.cartData[0]["order"]
-                                                  .removeWhere(
-                                                    (orderItem) =>
-                                                        orderItem["prd_id"]
-                                                            .toString() ==
-                                                        item["prd_id"]
-                                                            .toString(),
-                                                  );
-
-                                              // ✅ Debug print to check global list
-                                              print(
-                                                "After Delete: ${GlobalCart.cartData[0]["order"]}",
-                                              );
-                                            },
+                                            onPressed: () =>
+                                                controller.deleteItem(index),
                                             icon: const Icon(
                                               Icons.delete,
                                               color: Colors.red,
@@ -376,75 +244,40 @@ class ViewCartPage extends StatelessWidget {
                               return;
                             }
 
-                            GlobalCart.cartData[0]["order"] = controller
-                                .cartItems
-                                .map(
-                                  (item) => {
-                                    "prd_id": "${item['prd_id']}",
-                                    "qty":
-                                        "${item['qty'] ?? (item['small'] ?? 0) + (item['large'] ?? 0)}",
-                                    "price": "${item['price']}",
-                                    "type": item['type'] ?? "food",
-                                    if (item['type'] == 'liquor')
-                                      "small": "${item['small'] ?? 0}",
-                                    if (item['type'] == 'liquor')
-                                      "large": "${item['large'] ?? 0}",
-                                  },
-                                )
-                                .toList();
-
-                            print(
-                              "✅ Final GlobalCart Before API Call: ${GlobalCart.cartData}",
-                            );
-
                             // -------------------- Check User Balance --------------------
                             final user = await SessionManager.getUser();
-
                             if (user != null) {
-                              final double balance =
-                                  double.tryParse(
-                                    user.records.memberBalance.toString(),
-                                  ) ??
-                                  0;
+                              final double balance = double.tryParse(user.records.memberBalance.toString()) ?? 0;
 
+                              // Calculate total cart price
                               double totalPrice = 0;
                               for (var item in controller.cartItems) {
                                 final isLiquor = item['type'] == 'liquor';
                                 final qty = isLiquor
-                                    ? ((item['small'] ?? 0) +
-                                          (item['large'] ?? 0))
+                                    ? ((item['small'] ?? 0) + (item['large'] ?? 0))
                                     : (item['qty'] ?? 1);
-                                final price =
-                                    double.tryParse(item['price'].toString()) ??
-                                    0;
+                                final price = double.tryParse(item['price'].toString()) ?? 0;
                                 totalPrice += isLiquor
-                                    ? ((item['small'] ?? 0) * price +
-                                          (item['large'] ?? 0) * price * 2)
+                                    ? ((item['small'] ?? 0) * price + (item['large'] ?? 0) * price * 2)
                                     : price * qty;
                               }
 
                               if (balance < totalPrice) {
                                 CustomSnackBar.show(
                                   title: "Insufficient Balance",
-                                  message:
-                                      "You do not have enough balance to place this order.",
+                                  message: "You do not have enough balance to place this order.",
                                   icon: Icons.error,
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white,
                                   iconColor: Colors.white,
                                 );
-                                return;
+                                return; // Stop here, do not call API
                               }
-
-                              GlobalCart.cartData[0]["member_id"] =
-                                  "${user.records.memberId}";
-                              print(
-                                "Member ID: ${GlobalCart.cartData[0]["member_id"]}",
-                              );
+                              // Set member ID
+                              GlobalCart.cartData[0]["member_id"] = "${user.records.memberId}";
+                              print("Member ID: ${GlobalCart.cartData[0]["member_id"]}");
                             } else {
-                              print(
-                                "Member ID: ${GlobalCart.cartData[0]["member_id"]}",
-                              );
+                              print("Member ID: ${GlobalCart.cartData[0]["member_id"]}");
                             }
 
                             // -------------------- Call API --------------------
@@ -452,22 +285,17 @@ class ViewCartPage extends StatelessWidget {
                               final response = await OrderApiService.orderNow();
                               print("Order placed successfully: $response");
 
-                              Get.offAll(
-                                () => ThankYouPage(
-                                  userName: user?.mainMemberName ?? "John Doe",
-                                  cartItems: List<Map<String, dynamic>>.from(
-                                    controller.cartItems,
-                                  ),
-                                  orderNo:
-                                      "ORD${DateTime.now().millisecondsSinceEpoch}",
-                                  userType: user?.records.memberType,
-                                  orderStatusMsg:
-                                      response['order'] == null ||
-                                          response['order'][0] == null
-                                      ? "Stock Not Available"
-                                      : null,
-                                ),
-                              );
+
+                              controller.cartItems.refresh();
+                              Get.offAll(() => ThankYouPage(
+                                userName: user?.mainMemberName ?? "John Doe",
+                                cartItems: List<Map<String, dynamic>>.from(controller.cartItems),
+                                orderNo: "ORD${DateTime.now().millisecondsSinceEpoch}",
+                                userType: user?.records.memberType,
+                                orderStatusMsg: response['order'] == null || response['order'][0] == null
+                                    ? "Stock Not Available"
+                                    : null,
+                              ));
                             } catch (e) {
                               print("Failed to place order: $e");
                               CustomSnackBar.show(
@@ -479,52 +307,15 @@ class ViewCartPage extends StatelessWidget {
                                 iconColor: Colors.white,
                               );
                             }
-
-
-
-                            final controllers = Get.find<ViewCartController>();
-
-                            if (controller.cartItems.isEmpty) {
-                              CustomSnackBar.show(
-                                title: "Empty",
-                                message: "No items in cart!",
-                                icon: Icons.info,
-                                backgroundColor: AppColors.primary,
-                                textColor: AppColors.white,
-                                iconColor: AppColors.white,
-                              );
-                              return;
-                            }
-
-                            // ✅ Clear previous cart in SharedPreferences
-                            await CartPrefs.clearCart();
-
-                            // ✅ Save current cart to SharedPreferences
-                            await CartPrefs.saveCart(controller.cartItems);
-
-                            print("✅ Cart saved in SharedPreferences: ${controller.cartItems}");
-
-                            // -------------------- Continue existing Place Order logic --------------------
-                            GlobalCart.cartData[0]["order"] = controller
-                                .cartItems
-                                .map(
-                                  (item) => {
-                                "prd_id": "${item['prd_id']}",
-                                "qty":
-                                "${item['qty'] ?? (item['small'] ?? 0) + (item['large'] ?? 0)}",
-                                "price": "${item['price']}",
-                                "type": item['type'] ?? "food",
-                                if (item['type'] == 'liquor')
-                                  "small": "${item['small'] ?? 0}",
-                                if (item['type'] == 'liquor')
-                                  "large": "${item['large'] ?? 0}",
-                              },
-                            )
-                                .toList();
-
-
-
+                                TempCart.menuItems.clear();
+                            TempCart.liquorItems.clear();
+                            TempCart.fastFoodItems.clear();
+                            final liquorController = Get.find<LiquorController>();
+                            await liquorController.fetchLiquorProducts(); // 🔄 Refres
                           },
+
+
+
 
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,

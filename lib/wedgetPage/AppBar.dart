@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/HomeController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
 
 class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final HomeController controller = Get.put(HomeController());
@@ -43,19 +44,7 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
               const SizedBox(width: 10),
 
               Text(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                "DSOI JABALPUR",
-=======
                 "${AppStrings.locationJabalpur}",
->>>>>>> Stashed changes
-=======
-                "${AppStrings.locationJabalpur}",
->>>>>>> Stashed changes
-=======
-                "${AppStrings.locationJabalpur}",
->>>>>>> Stashed changes
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w900, // aur bold

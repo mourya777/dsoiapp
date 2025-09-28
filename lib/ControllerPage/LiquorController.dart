@@ -1,168 +1,116 @@
-import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../ApiControllers/ProductApiController.dart';
+import '../ModelsPage/ManuitemModels.dart';
+import '../UtilsPage/SessionManager.dart';
+import '../wedgetPage/GlobleList.dart';
+
 
 class LiquorController extends GetxController {
-  final RxList<String> categories =
-      <String>["Whisky", "Rum", "Vodka", "Brandy", "Gin"].obs;
+  final String catId;
+  LiquorController({required this.catId});
+  // pass catId here
 
-  final Map<String, List<Map<String, dynamic>>> liquorData = {
-    "Whisky": [
-      {"name": "Royal Stag", "price": 150, "image": "Assets/Liquor/Royal Stag.jpeg"},
-      {"name": "McDowell’s No.1", "price": 200, "image": "Assets/Liquor/McDowell’s No.1.jpeg"},
-      {"name": "Signature", "price": 300, "image": "Assets/Liquor/Signature.jpeg"},
-      {"name": "Blenders Pride", "price": 250, "image": "Assets/Liquor/Blenders Pride.jpeg"},
-      {"name": "8PM", "price": 180, "image": "Assets/Liquor/8PM.jpeg"},
-    ],
-    "Rum": [
-      {"name": "Old Monk", "price": 160, "image": "Assets/Liquor/Old Monk .jpeg"},
-      {"name": "Bacardi", "price": 220, "image": "Assets/Liquor/Bacardi .jpeg"},
-      {"name": "Captain Morgan", "price": 280, "image": "Assets/Liquor/Captain Morgan .jpeg"},
-      {"name": "Havana Club", "price": 300, "image": "Assets/Liquor/Havana Club .jpeg"},
-      {"name": "McDowell’s No.1 Rum", "price": 180, "image": "Assets/Liquor/McDowell’s No.1 Rum .jpeg"},
-    ],
-    "Vodka": [
-      {"name": "Smirnoff", "price": 200, "image": "Assets/Liquor/Smirnoff.jpeg"},
-      {"name": "Romanov", "price": 180, "image": "Assets/Liquor/Romanov .jpeg"},
-      {"name": "Absolut", "price": 300, "image": "Assets/Liquor/Absolut .jpeg"},
-      {"name": "Magic Moments", "price": 220, "image": "Assets/Liquor/Magic Moments .jpeg"},
-      {"name": "White Mischief", "price": 1150, "image": "Assets/Liquor/White Mischief.jpeg"},
-    ],
-    "Brandy": [
-      {"name": "Old Admiral", "price": 180, "image": "Assets/Liquor/Old Admiral .jpeg"},
-      {"name": "Mansion House", "price": 220, "image": "Assets/Liquor/Mansion House .jpeg"},
-      {"name": "Contessa", "price": 250, "image": "Assets/Liquor/Contessa.jpeg"},
-      {"name": "Honey Bee", "price": 200, "image": "Assets/Liquor/HoneyBee.jpeg"},
-      {"name": "Bacardi Brandy", "price": 280, "image": "Assets/Liquor/Bacardi Brandy .jpeg"},
-    ],
-    "Gin": [
-      {"name": "Blue Riband", "price": 180, "image": "Assets/Liquor/Blue Riband.jpeg"},
-      {"name": "Greater Than", "price": 250, "image": "Assets/Liquor/Greater Than .jpeg"},
-      {"name": "Bombay Sapphire", "price": 300, "image": "Assets/Liquor/Bombay Sapphire.jpeg"},
-      {"name": "Hapusa", "price": 220, "image": "Assets/Liquor/Hapusa .jpeg"},
-      {"name": "Tanqueray", "price": 350, "image": "Assets/Liquor/Tanqueray .jpeg"},
-    ],
-  };
+  var categories = <String>[].obs;
+  var isLoading = true.obs;
 
-  final Map<String, int> stockLevels = {
-    "Whisky": 150,
-    "Rum": 120,
-    "Vodka": 80,
-    "Brandy": 50,
-    "Gin": 5,
-  };
+  var liquorData = <String, List<Map<String, dynamic>>>{};
+  var stockLevels = <String, int>{};
+  var selectedTypeIndex = <String, int>{};
+  var bogoOffers = <String, List<int>>{}.obs;
 
-  final Map<String, List<int>> bogoOffers = {
-    "Whisky": [0, 1, 2],
-    "Rum": [0, 1, 2],
-    "Vodka": [0, 1, 2],
-    "Brandy": [0, 1, 2],
-    "Gin": [0, 1, 2],
-  };
-
-  var selectedTypeIndex = <String, int>{}.obs;
-  var totalMl = <String, int>{}.obs;
-  var cartItems = <Map<String, dynamic>>[].obs;
+  var smallCount = <String, int>{}.obs;
+  var largeCount = <String, int>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
-    for (var cat in categories) {
-      selectedTypeIndex[cat] = 0;
-      totalMl[cat] = 0;
+    getUserId();
+    fetchLiquorProducts();
+  }
+  Future<void> getUserId() async {
+    final user = await SessionManager.getUser();
+    if (user != null) {
+      print("User ID: ${user.records.memberId}");
+      GlobalCart.cartData[0]["member_id"] = "${user.records.memberId}";
+      print("member id this!${GlobalCart.cartData[0]["member_id"]}");
+
+    } else {
+      print("member id this!${GlobalCart.cartData[0]["member_id"]}");
     }
-    loadCart();
   }
+  Future<void> fetchLiquorProducts() async {
+    try {
+      isLoading(true);
+      final List<Product> response = await ProductService.fetchProducts(
+        catId: catId,
+      );
+      print("Liquor API response length: ${response.length}");
 
-  void addItem(String category) {
-    totalMl[category] = (totalMl[category] ?? 0) + 30;
-    saveCart();
-  }
+      categories.clear();
+      liquorData.clear();
+      stockLevels.clear();
+      selectedTypeIndex.clear();
+      smallCount.clear();
+      largeCount.clear();
 
-  void removeItem(String category) {
-    if ((totalMl[category] ?? 0) > 0) {
-      totalMl[category] = totalMl[category]! - 30;
+      for (var product in response) {
+        final type = product.prdType ?? "Unknown";
+        if (!categories.contains(type)) {
+          categories.add(type);
+          liquorData[type] = [];
+          stockLevels[type] = 0;
+          selectedTypeIndex[type] = 0;
+          smallCount[type] = 0;
+          largeCount[type] = 0;
+        }
+        liquorData[type]!.add({
+          "id": product.prdId,
+          "name": product.prdName,
+          "price": double.tryParse(product.prdPrice) ?? 0,
+          "stock": int.tryParse(product.prdStock) ?? 0,
+          "image": "Assets/Non-Veg/Egg Curry.jpeg",
+        });
+        stockLevels[type] =
+            (stockLevels[type] ?? 0) + (int.tryParse(product.prdStock) ?? 0);
+      }
+    } catch (e) {
+      print("❌ Error fetching liquor products: $e");
+    } finally {
+      isLoading(false);
     }
-    saveCart();
   }
 
-  int getSmall(String category) {
-    int small = ((totalMl[category] ?? 0) % 60) ~/ 30;
-    if (bogoOffers[category]?.contains(selectedTypeIndex[category]) ?? false) {
-      small *= 2;
-    }
-    return small;
+  Map<String, dynamic> getCurrentItem(String cat) {
+    int index = selectedTypeIndex[cat] ?? 0;
+    return liquorData[cat]?[index] ?? {};
   }
 
-  int getLarge(String category) {
-    int large = (totalMl[category] ?? 0) ~/ 60;
-    if (bogoOffers[category]?.contains(selectedTypeIndex[category]) ?? false) {
-      large *= 1;
-    }
-    return large;
+  int getSmall(String cat) => smallCount[cat] ?? 0;
+  int getLarge(String cat) => largeCount[cat] ?? 0;
+
+  void addItem(String cat) {
+    int totalMl =
+        ((smallCount[cat] ?? 0) * 30) + ((largeCount[cat] ?? 0) * 60) + 30;
+    largeCount[cat] = totalMl ~/ 60;
+    smallCount[cat] = (totalMl % 60) ~/ 30;
   }
 
-  Map<String, dynamic> getCurrentItem(String category) {
-    return liquorData[category]![selectedTypeIndex[category] ?? 0];
+  void removeItem(String cat) {
+    int totalMl =
+        ((smallCount[cat] ?? 0) * 30) + ((largeCount[cat] ?? 0) * 60) - 30;
+    if (totalMl < 0) totalMl = 0;
+    largeCount[cat] = totalMl ~/ 60;
+    smallCount[cat] = (totalMl % 60) ~/ 30;
   }
 
   int getTotalPrice() {
     int total = 0;
     for (var cat in categories) {
-      var item = getCurrentItem(cat);
-      int price = item['price'];
-
-      if (bogoOffers[cat]?.contains(selectedTypeIndex[cat]) ?? false) {
-        total += ((getSmall(cat) ~/ 2) * price) + ((getLarge(cat) ~/ 2) * price * 2);
-      } else {
-        total += (getSmall(cat) * price) + (getLarge(cat) * price * 2);
-      }
+      final item = getCurrentItem(cat);
+      double price = item['price'] ?? 0;
+      total +=
+          ((smallCount[cat] ?? 0) + (largeCount[cat] ?? 0) * 2) * price.toInt();
     }
     return total;
-  }
-
-  Future<void> saveCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<Map<String, dynamic>> newLiquorItems = [];
-
-    for (var cat in categories) {
-      var item = getCurrentItem(cat);
-      int small = getSmall(cat);
-      int large = getLarge(cat);
-
-      if (small > 0 || large > 0) {
-        newLiquorItems.add({
-          "category": cat,
-          "name": item['name'],
-          "price": item['price'],
-          "image": item['image'],
-          "small": small,
-          "large": large,
-          "bogo": bogoOffers[cat]?.contains(selectedTypeIndex[cat]) ?? false,
-          "type": "liquor",
-        });
-      }
-    }
-
-    // Remove previous liquor items and add new ones
-    final existingData = prefs.getString("liquor_cart_items");
-    List<Map<String, dynamic>> existingCart = [];
-    if (existingData != null) {
-      existingCart = List<Map<String, dynamic>>.from(jsonDecode(existingData));
-      existingCart.removeWhere((item) => item["type"] == "liquor");
-    }
-
-    existingCart.addAll(newLiquorItems);
-    cartItems.value = existingCart;
-
-    await prefs.setString("liquor_cart_items", jsonEncode(existingCart));
-  }
-
-  Future<void> loadCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString("liquor_cart_items");
-    if (data != null) {
-      cartItems.value = List<Map<String, dynamic>>.from(jsonDecode(data));
-    }
   }
 }

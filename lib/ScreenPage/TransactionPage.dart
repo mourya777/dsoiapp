@@ -3,206 +3,164 @@ import 'package:get/get.dart';
 import '../ControllerPage/TransactionController.dart';
 import '../UtilsPage/ColorsPage.dart';
 import '../wedgetPage/AppBar.dart';
+import '../wedgetPage/SnackBarMessage.dart';
+import 'OrderBillPage.dart';
 
-class TransactionHistoryPage extends StatelessWidget {
-  TransactionHistoryPage({super.key});
+class OrderHistoryPage extends StatelessWidget {
+  final OrderHistoryController controller =
+  Get.put(OrderHistoryController());
 
-  final TransactionHistoryController controller =
-  Get.put(TransactionHistoryController());
+  OrderHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AdvancedAppBar(),
-      backgroundColor: AppColors.white,
-      body: Obx(
-            () => Container(
-          color: AppColors.primary.withOpacity(0.2),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ListView.builder(
-                  padding: const EdgeInsets.all(6),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.transactions.length,
-                  itemBuilder: (context, index) {
-                    var txn = controller.transactions[index];
-                    return Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.all(8),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 6,
-                            offset: const Offset(2, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context).copyWith(
-                              dividerColor: Colors.transparent,
-                              expansionTileTheme:
-                              const ExpansionTileThemeData(
-                                iconColor: AppColors.grey,
-                                collapsedIconColor: AppColors.grey,
-                              ),
-                            ),
-                            child: ExpansionTile(
-                              title: Text(
-                                txn["title"].toString(),
-                                style: const TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "${txn["amount"].toString()}/-",
-                                    style: const TextStyle(
-                                      color: AppColors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Icon(Icons.expand_more,
-                                      color: AppColors.grey),
-                                ],
-                              ),
-                              children: [
-                                const Divider(color: AppColors.khakiLight),
+      appBar:AdvancedAppBar(),
+      body: Obx(() {
+        return ListView.builder(
+          itemCount: controller.transactions.length,
+          itemBuilder: (context, index) {
+            var txn = controller.transactions[index];
+            var details = txn["details"];
 
-                                // Dynamic Food details
-                                ...List.generate(
-                                  (txn["details"] as List).length,
-                                      (i) {
-                                    var item = txn["details"][i];
-                                    return ListTile(
-                                      leading: const Icon(Icons.fastfood,
-                                          color: AppColors.primary),
-                                      title: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            item["item"].toString(),
-                                            style: const TextStyle(
-                                                color: AppColors.black,
-                                                fontSize: 16),
-                                          ),
-                                          Text(
-                                            "${item["price"].toString()}/-",
-                                            style: const TextStyle(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-
-                                // Date
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      bottom: 10, right: 12),
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      txn["date"].toString(),
-                                      style: const TextStyle(
-                                        color: AppColors.grey,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              elevation: 3,
+              child: ExpansionTile(
+                leading: const Icon(Icons.shopping_bag, color: AppColors.primary),
+                title: Text(
+                  "${txn["title"]} (${txn["amount"]})",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
+                subtitle: Text(txn["date"]),
+                children: [
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildRow("Order ID:", details["orderId"]),
+                        buildRow("Category:", details["category"]),
+                        buildRow("Price:", details["price"]),
+                        buildRow(
+                          "Status:",
+                          details["status"],
+                          color: details["status"] == "Delivered"
+                              ? Colors.green
+                              : details["status"] == "Pending"
+                              ? Colors.orange
+                              : Colors.red,
+                        ),
+                        const SizedBox(height: 12),
 
-                // ✅ NO MORE / VIEW ALL Button (Right aligned with Icon)
-                Padding(
-                  padding:
-                  const EdgeInsets.only(right: 16.0, top: 8, bottom: 16),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      ),
-                      onPressed: () {
-                        if (controller.transactions.length > 5) {
-                          Get.snackbar(
-                            "Info",
-                            "Viewing all transactions",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: AppColors.primary,
-                            colorText: AppColors.white,
-                          );
-                        } else {
-                          Get.snackbar(
-                            "Info",
-                            "No more transactions available",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: AppColors.primary,
-                            colorText: AppColors.white,
-                          );
-                        }
-                      },
-                      icon: Icon(
-                        controller.transactions.length > 5
-                            ? Icons.list_alt
-                            : Icons.block,
-                        color: AppColors.black,
-                      ),
-                      label: Text(
-                        controller.transactions.length > 5
-                            ? "VIEW ALL"
-                            : "VIEW MORE",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.black,
-                        ),
-                      ),
+                        // Action Buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Cancel Button with gradient
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    AppColors.white, AppColors.white],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                ),
+                                onPressed: () {
+                                  CustomSnackBar.show(
+                                    title: "Cancelled",
+                                    message: "Order ${details["orderId"]} cancelled",
+                                    icon: Icons.close,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    iconColor: Colors.white,
+                                  );
+
+                                },
+                                icon: const Icon(Icons.cancel, color: Colors.white),
+                                label: const Text(
+                                  "Cancel",
+                                  style: TextStyle(color: AppColors.red),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(width: 8),
+
+                            // View Button with gradient
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    AppColors.khaki,
+                                    AppColors.primary,
+                                    AppColors.secondary],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Get.to(() => OrderReceiptPage());
+                                },
+                                icon: const Icon(Icons.remove_red_eye, color: Colors.white),
+                                label: const Text(
+                                  "View",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+
+                      ],
                     ),
-                  ),
-                ),
+                  )
+                ],
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
 
-                const SizedBox(height: 180),
-              ],
-            ),
+  Widget buildRow(String label, String value, {Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 15),
           ),
-        ),
+          const SizedBox(width: 6),
+          Text(
+            value,
+            style: TextStyle(
+                fontSize: 15, fontWeight: FontWeight.w500, color: color),
+          ),
+        ],
       ),
     );
   }
 }
+

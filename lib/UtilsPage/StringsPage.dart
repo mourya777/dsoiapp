@@ -8,7 +8,6 @@ class AppStrings {
   static const String login = "login";
   static const String locationmhow="DSOMI MHOW";
   static const String locationJabalpur="DSOI JABALPUR";
-  static const String dsoi="DSOI";
   // Common Keys
   static const String catId = "cat_id";
   static const String memberId = "member_id";

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/SplashController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class SplashScreen extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
+
           gradient: LinearGradient(
             colors: [
               AppColors.primary,    // Dark Olive Green
@@ -32,29 +34,17 @@ class SplashScreen extends StatelessWidget {
               Image(
                 image: AssetImage('Assets/Images/appbar_logo-removebg-preview.png'),
                 width: 250,
-                height: 250,
+                height: 280,
                 fit: BoxFit.cover,
               ),
 
               Text(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                "DSOI JABALPUR",
-=======
                 "${AppStrings.locationJabalpur}",
->>>>>>> Stashed changes
-=======
-                "${AppStrings.locationJabalpur}",
->>>>>>> Stashed changes
-=======
-                "${AppStrings.locationJabalpur}",
->>>>>>> Stashed changes
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.white,
-                  letterSpacing: 1.5,
+                  fontWeight: FontWeight.w900, // aur bold
+                  color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                  letterSpacing: 1.5, // thoda space letters ke beech
                   shadows: [
                     Shadow(
                       offset: Offset(2, 2),

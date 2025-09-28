@@ -27,9 +27,9 @@ class _BottomNavPageState extends State<BottomNavPage> {
 
   final List<Widget> _pages = [
     HomePage(),
-    TransactionHistoryPage(),
+    OrderHistoryPage(),
     QrScannerPage(),
-    AddToCartPage(),
+    TransactionHistoryPage(),
     const ProfilePage(),
   ];
 
@@ -39,11 +39,11 @@ class _BottomNavPageState extends State<BottomNavPage> {
       onWillPop: () async {
         if (_currentIndex > 0) {
           setState(() {
-            _currentIndex--; // 🔹 back दबाने पर index घटेगा
+            _currentIndex--;
           });
-          return false; // app close नहीं होगा
+          return false;
         }
-        return true; // अगर index 0 है तो app close होगा
+        return true;
       },
       child: Scaffold(
         extendBody: true,
