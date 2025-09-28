@@ -23,7 +23,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       title: 'DSOI',
+=======
+      title:AppStrings.dsoi,
+>>>>>>> Stashed changes
 =======
       title:AppStrings.dsoi,
 >>>>>>> Stashed changes

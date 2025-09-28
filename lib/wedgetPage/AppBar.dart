@@ -45,7 +45,11 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 "DSOI JABALPUR",
+=======
+                "${AppStrings.locationJabalpur}",
+>>>>>>> Stashed changes
 =======
                 "${AppStrings.locationJabalpur}",
 >>>>>>> Stashed changes

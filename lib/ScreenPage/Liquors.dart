@@ -31,8 +31,11 @@ class LiquorPage extends StatelessWidget {
     return Scaffold(
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
       appBar: AdvancedAppBar(),
 =======
+=======
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
 =======
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
         appBar: AppBar(
@@ -80,6 +83,9 @@ class LiquorPage extends StatelessWidget {
           ],
         ),
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
+=======
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
 =======
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
@@ -238,8 +244,11 @@ class LiquorPage extends StatelessWidget {
 
 
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 =======
 
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
+=======
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                                                         GlobalCart.cartData[0]["order"].removeWhere(
                                                               (orderItem) => orderItem["prd_id"] == "${item['prd_id']}",
@@ -379,12 +388,16 @@ class LiquorPage extends StatelessWidget {
 
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 
 
 
 
 
                       Get.to(BillingPage());
+=======
+                      Get.to(() => ViewCartPage());
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
 =======
                       Get.to(() => ViewCartPage());
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
@@ -398,7 +411,10 @@ class LiquorPage extends StatelessWidget {
 
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 <<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 =======
+=======
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
 =======
 >>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                   child:Row(
