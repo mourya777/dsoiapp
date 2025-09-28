@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/SplashController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -12,9 +13,11 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
+
           gradient: LinearGradient(
             colors: [
               AppColors.primary,    // Dark Olive Green
@@ -31,18 +34,27 @@ class SplashScreen extends StatelessWidget {
               Image(
                 image: AssetImage('Assets/Images/appbar_logo-removebg-preview.png'),
                 width: 250,
-                height: 250,
+                height: 280,
                 fit: BoxFit.cover,
               ),
 
               Text(
-                "DSOI JABALPUR",
+                "${AppStrings.locationJabalpur}",
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.golden, // Aap chahe to AppColors.golden bhi use kar sakte ho
+                  fontSize: 33,
+                  fontWeight: FontWeight.w900, // aur bold
+                  color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                  letterSpacing: 1.5, // thoda space letters ke beech
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2, 2),
+                      blurRadius: 4,
+                      color: Colors.black26,
+                    ),
+                  ],
                 ),
               ),
+
             ],
           ),
         ),

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class TransactionHistoryController extends GetxController {
+class OrderHistoryController extends GetxController {
   var transactions = <Map<String, dynamic>>[].obs;
 
   @override
@@ -10,53 +10,61 @@ class TransactionHistoryController extends GetxController {
   }
 
   void loadTransactions() {
-    // Static dummy transactions with details
     transactions.value = [
       {
-        "title": "Food Court",
-        "amount": "- ₹500",
+        "title": "OrdersHistory",
+        "amount": "- ₹500/-",
         "date": "12 Sept 2025",
-        "details": [
-          {"item": "Pizza", "price": "₹200"},
-          {"item": "Burger", "price": "₹150"},
-          {"item": "Cold Drink", "price": "₹150"},
-        ]
+        "details": {
+          "orderId": "ORD12345",
+          "category": "Food",
+          "price": "₹500/-",
+          "status": "Delivered",
+        }
       },
       {
-        "title": "Food Court",
-        "amount": "- ₹300",
+        "title": "OrdersHistory",
+        "amount": "- ₹300/-",
         "date": "11 Sept 2025",
-        "details": [
-          {"item": "Sandwich", "price": "₹120"},
-          {"item": "Coffee", "price": "₹180"},
-        ]
+        "details": {
+          "orderId": "ORD12346",
+          "category": "Liquor",
+          "price": "₹300/-",
+          "status": "Pending",
+        }
       },
       {
-        "title": "Food Court",
-        "amount": "- ₹450",
+        "title": "OrdersHistory",
+        "amount": "- ₹450/-",
         "date": "10 Sept 2025",
-        "details": [
-          {"item": "Pasta", "price": "₹250"},
-          {"item": "Juice", "price": "₹200"},
-        ]
+        "details": {
+          "orderId": "ORD12347",
+          "category": "FastFood",
+          "price": "₹450/-",
+          "status": "Cancelled",
+        }
       },
       {
-        "title": "Food Court",
-        "amount": "- ₹250",
+        "title": "OrdersHistory",
+        "amount": "- ₹250/-",
         "date": "09 Sept 2025",
-        "details": [
-          {"item": "Fries", "price": "₹100"},
-          {"item": "Tea", "price": "₹150"},
-        ]
+        "details": {
+          "orderId": "ORD12348",
+          "category": "Snack",
+          "price": "₹250/-",
+          "status": "Delivered",
+        }
       },
       {
-        "title": "Food Court",
-        "amount": "- ₹600",
+        "title": "OrdersHistory",
+        "amount": "- ₹600/-",
         "date": "08 Sept 2025",
-        "details": [
-          {"item": "Thali", "price": "₹400"},
-          {"item": "Cold Drink", "price": "₹200"},
-        ]
+        "details": {
+          "orderId": "ORD12349",
+          "category": "Drink",
+          "price": "₹600/-",
+          "status": "Pending",
+        }
       },
     ];
   }

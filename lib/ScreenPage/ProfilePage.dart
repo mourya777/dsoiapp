@@ -86,7 +86,7 @@ class ProfilePage extends StatelessWidget {
               // Buttons
               _buildProfileButton(
                   icon: Icons.edit,
-                  text: "SOLDIER DETAILS",
+                  text: "MEMBER DETAILS ",
                   onTap: () => profileController.showUserDetailsSheet(context)),
               const SizedBox(height: 16),
               _buildProfileButton(

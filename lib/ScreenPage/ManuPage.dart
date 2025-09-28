@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:resturent/UtilsPage/ColorsPage.dart';
+
 import '../ControllerPage/ManuController.dart';
+import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/SessionManager.dart';
+import '../UtilsPage/StringsPage.dart';
 import '../wedgetPage/AppBar.dart';
-import 'Liquors.dart';
+import '../wedgetPage/CustomeText.dart';
+import '../wedgetPage/GlobleList.dart';
+import '../wedgetPage/VerifyRFIDPopup.dart';
+import 'LiquorsPage.dart';
 import 'ManuItemPage.dart';
+import 'buttombarPage.dart';
 
 class MenuView extends StatelessWidget {
   MenuView({Key? key}) : super(key: key);
@@ -14,49 +21,105 @@ class MenuView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AdvancedAppBar(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: AppColors.primary,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'Assets/Images/appbar_logo-removebg-preview.png',
+              height: 50,
+              width: 50,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              "${AppStrings.locationJabalpur}",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w900, // aur bold
+                color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                letterSpacing: 1.5, // thoda space letters ke beech
+                shadows: [
+                  Shadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 4,
+                    color: Colors.black26,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Get.offAll(BottomNavPage());
+                },
+                icon: Icon(Icons.menu, color: AppColors.white),
+              ),
+              SizedBox(width: 20),
+            ],
+          ),
+        ],
+      ),
       backgroundColor: AppColors.white,
       body: Obx(() {
+        if (controller.menuCards.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
         return Container(
-          color: AppColors.primary.withOpacity(0.5),
+          color: AppColors.primary.withOpacity(0.2),
           child: ListView.builder(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+            padding: const EdgeInsets.all(16),
             itemCount: controller.menuCards.length,
             itemBuilder: (context, index) {
               final card = controller.menuCards[index];
 
-              int itemCount = 0;
-              switch (card.name) {
-                case "Vegetarian":
-                  itemCount = controller.vegItems.length;
-                  break;
-                case "Non-Vegetarian":
-                  itemCount = controller.nonVegItems.length;
-                  break;
-                case "Snack":
-                  itemCount = controller.snacks.length;
-                  break;
-                case "Drinks":
-                  itemCount = controller.drinks.length;
-                  break;
-                case "Liquors":
-                  itemCount = 0; // Or any number if needed
-                  break;
-              }
 
               return GestureDetector(
-                onTap: () {
-                  if (index == controller.menuCards.length - 1) {
-                    Get.to(() => LiquorPage());
+                onTap: () async {
+                  final loggedIn = await SessionManager.isLoggedIn();
+                  final catId = card.catId;
+
+                  void navigate() {
+                    final typeLower = card.title.toLowerCase();
+                    if (typeLower == "liquor") {
+                      GlobalCart.cartData[0]["cat_id"] = "$catId";
+                      Get.to(() => LiquorPage(catId: catId));
+                    } else if (typeLower == "food" || typeLower == "fastfood") {
+                      Get.to(() => MenuItemsPage(catId: catId));
+                      GlobalCart.cartData[0]["cat_id"] = "$catId";
+
+                    } else {
+                      Get.to(() => MenuItemsPage(catId: catId));
+                      GlobalCart.cartData[0]["cat_id"] = "$catId";
+
+                    }
+                  }
+
+                  if (loggedIn) {
+                    navigate();
                   } else {
-                    Get.to(() => MenuItemsView(
-                        categoryIndex: index, categoryName: card.name));
+                    RFIDDialog.show(
+                      context,
+                      card.title,
+
+                      onVerified: () {
+                        navigate();
+                      },
+                    );
                   }
                 },
+
                 child: Card(
-                  margin: EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   elevation: 5,
                   child: Container(
                     height: 120,
@@ -70,22 +133,13 @@ class MenuView extends StatelessWidget {
                             height: 100,
                             color: Colors.grey[200],
                             child: Image.asset(
-                              card.image,
-                              fit: BoxFit.contain,
+                              controller.getCardImage(card.title),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            card.name,
-                            style: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        // Circle showing item count
+                        Expanded(child: AdvancedTitleText(title: card.title)),
                         const SizedBox(width: 8),
                       ],
                     ),
