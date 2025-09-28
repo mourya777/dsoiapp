@@ -8,7 +8,102 @@ class CartController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+<<<<<<< Updated upstream
     loadCart();
+=======
+    getUserId();
+    fetchProducts();
+  }
+  Future<void> getUserId() async {
+    final user = await SessionManager.getUser();
+    if (user != null) {
+      print("User ID: ${user.records.memberId}");
+      GlobalCart.cartData[0]["member_id"] = "${user.records.memberId}";
+      print("member id this!${GlobalCart.cartData[0]["member_id"]}");
+
+    } else {
+      print("member id this!${GlobalCart.cartData[0]["member_id"]}");
+    }
+  }
+  int getQtyForItem(Product item) {
+    final existing = cartItems.firstWhereOrNull(
+          (e) => e['id'] == item.prdId,
+    );
+    return existing?['qty'] ?? 0;
+  }
+
+  void updateItemQty(Product item, int qty) {
+    final index = cartItems.indexWhere((e) => e['id'] == item.prdId);
+
+    if (qty <= 0) {
+      if (index != -1) cartItems.removeAt(index);
+    } else {
+      if (index != -1) {
+        cartItems[index]['qty'] = qty;
+      } else {
+        cartItems.add({
+          "id": item.prdId,
+          "name": item.prdName,
+          "price": item.prdPrice,
+          "qty": qty,
+          "type": item.prdType,
+        });
+      }
+    }
+
+    cartItems.refresh();
+
+    final itemPrice = double.tryParse(item.prdPrice.toString()) ?? 0;
+
+    if (item.prdType == "fastfood") {
+      if (qty > 0) {
+        TempCart.fastFoodItems.clear();
+        TempCart.fastFoodItems.add({
+          "id": item.prdId,
+          "name": item.prdName,
+          "price": itemPrice,
+          "qty": qty,
+          "total": itemPrice * qty,
+          "type": item.prdType,
+        });
+      } else {
+        TempCart.fastFoodItems.removeWhere((e) => e['id'] == item.prdId);
+      }
+    } else {
+      int tempIndex = TempCart.menuItems.indexWhere((e) => e['id'] == item.prdId);
+      if (qty <= 0) {
+        if (tempIndex != -1) TempCart.menuItems.removeAt(tempIndex);
+      } else {
+        final tempItem = {
+          "id": item.prdId,
+          "name": item.prdName,
+          "price": itemPrice,
+          "qty": qty,
+          "total": itemPrice * qty,
+          "type": item.prdType,
+        };
+        if (tempIndex != -1) {
+          TempCart.menuItems[tempIndex] = tempItem;
+        } else {
+          TempCart.menuItems.add(tempItem);
+        }
+      }
+    }
+  }
+
+
+
+
+  void fetchProducts() async {
+    try {
+      isLoading.value = true;
+      final result = await ProductService.fetchProducts(catId: catId);
+      print("API response length: ${result.length}");
+      products.value = result;
+    } finally {
+      isLoading.value = false;
+    }
+>>>>>>> Stashed changes
   }
 
   // Load cart from SharedPreferences

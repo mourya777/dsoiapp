@@ -41,6 +41,7 @@ flutter:
     - Assets/Veg/
     - Assets/Liquor/
     - Assets/Images/man_Image.jpg
+    - Assets/Images/mhow_logo-removebg-preview.png
 
 dependency_overrides:
   qr_code_scanner:

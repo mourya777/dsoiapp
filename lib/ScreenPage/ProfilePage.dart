@@ -43,41 +43,45 @@ class ProfilePage extends StatelessWidget {
                       AssetImage("Assets/Images/profile_images.jpeg"),
                     ),
                     const SizedBox(width: 16),
-                    Obx(() => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profileController.homeController.memberName.value,
-                          style: const TextStyle(
-                              color: AppColors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.person,color: AppColors.primary,),
-                            Text(
-                              profileController.homeController.memberType.value,
-                              style: const TextStyle(
-                                  color: AppColors.black, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.location_on,color: AppColors.primary,),
+                    Obx(
+                          () => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            profileController.homeController.memberName.value,
+                            style: const TextStyle(
+                                color: AppColors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.person, color: AppColors.primary),
+                              const SizedBox(width: 5),
+                              Text(
+                                profileController.homeController.memberType.value,
+                                style: const TextStyle(
+                                    color: AppColors.black, fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, color: AppColors.primary),
+                              const SizedBox(width: 5),
+                              Text(
+                                profileController.homeController.location.value,
+                                style: const TextStyle(
+                                    color: AppColors.black, fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
 
-                            Text(
-                              profileController.homeController.location.value,
-                              style: const TextStyle(
-                                  color: AppColors.black, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ))
                   ],
                 ),
               ),
@@ -139,3 +143,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
+
+
+

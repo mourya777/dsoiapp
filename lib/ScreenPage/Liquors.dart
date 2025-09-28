@@ -29,7 +29,54 @@ class LiquorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
       appBar: AdvancedAppBar(),
+=======
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: AppColors.primary,
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'Assets/Images/appbar_logo-removebg-preview.png',
+                height: 50,
+                width: 50,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                "${AppStrings.locationJabalpur}",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900, // aur bold
+                  color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                  letterSpacing: 1.5, // thoda space letters ke beech
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2, 2),
+                      blurRadius: 4,
+                      color: Colors.black26,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Get.offAll(MenuView());
+                  },
+                  icon: Icon(Icons.menu, color: AppColors.white),
+                ),
+                SizedBox(width: 20),
+              ],
+            ),
+          ],
+        ),
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
       backgroundColor: AppColors.white,
       body:Obx(() {
         return Column(
@@ -180,6 +227,16 @@ class LiquorPage extends StatelessWidget {
                                                     child: IconButton(
                                                       onPressed: () {
                                                         controller.removeItem(cat);
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+=======
+
+
+                                                        GlobalCart.cartData[0]["order"].removeWhere(
+                                                              (orderItem) => orderItem["prd_id"] == "${item['prd_id']}",
+                                                        );
+
+                                                        print("Removed product: ${item['prd_id']}");
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                                                       },
                                                       icon: const Icon(Icons.remove, color: Colors.black),
                                                     ),
@@ -310,17 +367,43 @@ class LiquorPage extends StatelessWidget {
                         // durationSeconds: 4, // optional
                       );
 
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
 
 
 
 
 
                       Get.to(BillingPage());
+=======
+                      Get.to(() => ViewCartPage());
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
                     }
                   },
                   child: Text("Checkout", style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold)),
                 )
 
+<<<<<<< Updated upstream:lib/ScreenPage/Liquors.dart
+=======
+                  child:Row(
+                    children: [
+                      Icon(
+                        Icons.card_membership,
+                        size: 20,
+                        color: AppColors.white,
+                      ),
+                      SizedBox(width: 6),
+                      const Text(
+                        "VIEWCARD",
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+>>>>>>> Stashed changes:lib/ScreenPage/LiquorsPage.dart
               ),
             ],
           ),

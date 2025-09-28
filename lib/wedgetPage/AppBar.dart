@@ -41,14 +41,26 @@ class AdvancedAppBar extends StatelessWidget implements PreferredSizeWidget {
                 width: 60,
               ),
               const SizedBox(width: 10),
+
               Text(
+<<<<<<< Updated upstream
                 "DSOI JABALPUR",
+=======
+                "${AppStrings.locationJabalpur}",
+>>>>>>> Stashed changes
                 style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.white,
+                  fontWeight: FontWeight.w900, // aur bold
+                  color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                  letterSpacing: 1.5, // thoda space letters ke beech
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2, 2),
+                      blurRadius: 4,
+                      color: Colors.black26,
+                    ),
+                  ],
                 ),
-                overflow: TextOverflow.ellipsis, // Prevent overflow
               ),
             ],
           ),

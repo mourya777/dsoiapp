@@ -7,7 +7,17 @@ import '../ControllerPage/HomeController.dart';
 import '../ControllerPage/LiquorController.dart';
 import '../ControllerPage/ManuitemController.dart';
 import '../UtilsPage/ColorsPage.dart';
+<<<<<<< Updated upstream
 import '../wedgetPage/SnackBarMessage.dart';
+=======
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
+import '../wedgetPage/GlobleList.dart';
+import 'BillingPage.dart';
+>>>>>>> Stashed changes
 import 'buttombarPage.dart';
 
 class BillingPage extends StatefulWidget {
@@ -244,11 +254,46 @@ class _BillingPageState extends State<BillingPage> {
                               ),
                             ],
                           ),
+<<<<<<< Updated upstream
                           if (index < cartItems.length - 1)
                             const Divider(thickness: 1),
                         ],
                       );
                     }),
+=======
+                        ),
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: () {
+                            Get.to(() => BillingPage(
+                                userName: userName, cartItems: cartItems));
+                          },
+                          child: const Text(
+                            "View",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 10),
+                      TextButton(
+                        onPressed: () {
+                          Get.offAll(() => MenuView());
+                          GlobalCart.cartData[0]["order"].clear(); // ✅ Global list clear
+
+                        },
+                        child: const Text(
+                          "Back",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.black),
+                        ),
+                      ),
+                    ],
+>>>>>>> Stashed changes
                   ),
                 ),
               ),
@@ -332,6 +377,7 @@ class _BillingPageState extends State<BillingPage> {
                       }
                     },
 
+<<<<<<< Updated upstream
                     style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.transparent,
                         foregroundColor: AppColors.transparent,
@@ -346,12 +392,94 @@ class _BillingPageState extends State<BillingPage> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
+=======
+class BillingPage extends StatelessWidget {
+  final String userName;
+  final List<Map<String, dynamic>> cartItems;
+
+  BillingPage({Key? key, required this.userName, required this.cartItems}) : super(key: key);
+
+  /// Generate text-based bill
+  String generateBill() {
+    final buffer = StringBuffer();
+    buffer.writeln("\n\n");
+    buffer.writeln("====================================");
+    buffer.writeln("          ${AppStrings.locationJabalpur} BILL        ");
+    buffer.writeln("====================================");
+    buffer.writeln("Date: ${DateTime.now().toString().split(' ')[0]}");
+    buffer.writeln("Customer: $userName");
+    buffer.writeln("------------------------------------");
+
+    int totalItems = 0;
+    double totalPrice = 0;
+
+    for (var item in cartItems) {
+      String name = item['name'] ?? '';
+      int qty = item['type'] == 'liquor'
+          ? ((item['small'] ?? 0) + (item['large'] ?? 0)).toInt()
+          : (item['qty'] ?? 1).toInt();
+      double price = double.tryParse(item['price'].toString()) ?? 0;
+      double itemTotal = item['type'] == 'liquor'
+          ? ((item['small'] ?? 0) * price + (item['large'] ?? 0) * price * 2)
+          : price * qty;
+
+      totalItems += qty;
+      totalPrice += itemTotal;
+
+      buffer.writeln(
+          "${name.padRight(20)} Qty:${qty.toString().padRight(3)} ₹${itemTotal.toStringAsFixed(0).padLeft(6)}/-");
+    }
+
+    buffer.writeln("------------------------------------");
+    buffer.writeln("Total Items: $totalItems");
+    buffer.writeln("Total Price: ₹${totalPrice.toStringAsFixed(0)}/-");
+    buffer.writeln("====================================");
+
+    return buffer.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final billText = generateBill();
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  billText,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontFamily: "Courier", // Monospace for alignment
+>>>>>>> Stashed changes
                   ),
                 ),
               ],
             ),
+<<<<<<< Updated upstream
           ),
         ],
+=======
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                GlobalCart.cartData[0]["order"].clear(); // ✅ Global list clear
+
+              },
+              child: const Text(
+                'Back',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+>>>>>>> Stashed changes
       ),
     );
   }

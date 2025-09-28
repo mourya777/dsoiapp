@@ -12,6 +12,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
@@ -36,13 +37,26 @@ class SplashScreen extends StatelessWidget {
               ),
 
               Text(
+<<<<<<< Updated upstream
                 "DSOI JABALPUR",
+=======
+                "${AppStrings.locationJabalpur}",
+>>>>>>> Stashed changes
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.golden, // Aap chahe to AppColors.golden bhi use kar sakte ho
+                  fontSize: 33,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.white,
+                  letterSpacing: 1.5,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2, 2),
+                      blurRadius: 4,
+                      color: Colors.black26,
+                    ),
+                  ],
                 ),
               ),
+
             ],
           ),
         ),

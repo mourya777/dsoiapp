@@ -1,29 +1,41 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../ControllerPage/HomeController.dart';
-import '../ControllerPage/ManuitemController.dart';
-import '../ControllerPage/LiquorController.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+
+import '../ControllerPage/ViewCardController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/SessionManager.dart';
 import '../wedgetPage/AppBar.dart';
-import '../wedgetPage/SnackBarMessage.dart';
 
 class AddToCartPage extends StatelessWidget {
   AddToCartPage({Key? key}) : super(key: key);
 
+<<<<<<< Updated upstream
   final CartController controller = Get.put(CartController());
   final LiquorController liquorController = Get.put(LiquorController());
   final HomeController homeController = Get.put(HomeController());
+=======
+  final ViewCartController controller = Get.put(ViewCartController());
+>>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
+    // Load saved cart on page init
+    CartPrefs.loadCart().then((savedItems) {
+      controller.cartItems.value = savedItems;
+    });
+
     return Scaffold(
       appBar: AdvancedAppBar(),
       body: Obx(() {
+<<<<<<< Updated upstream
         final combinedCart = [...controller.cartItems, ...liquorController.cartItems];
 
         if (combinedCart.isEmpty) {
+=======
+        if (controller.cartItems.isEmpty) {
+>>>>>>> Stashed changes
           return Center(
             child: Text(
               "Your cart is empty",
@@ -32,6 +44,7 @@ class AddToCartPage extends StatelessWidget {
           );
         }
 
+<<<<<<< Updated upstream
         return Stack(
           children: [
             Column(
@@ -272,6 +285,60 @@ class AddToCartPage extends StatelessWidget {
               }),
             ),
           ],
+=======
+        return ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: controller.cartItems.length,
+          itemBuilder: (context, index) {
+            final item = controller.cartItems[index];
+            final isLiquor = item['type'] == 'liquor';
+            int qty = isLiquor
+                ? ((item['small'] ?? 0) + (item['large'] ?? 0))
+                : (item['qty'] ?? 1);
+
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        item['image'] ?? 'Assets/Non-Veg/Egg Curry.jpeg',
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['name']?.toUpperCase() ?? '',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Qty: $qty",
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+>>>>>>> Stashed changes
         );
       }),
     );
