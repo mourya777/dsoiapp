@@ -1,6 +1,6 @@
 {
-    "name": "resturent",
-    "short_name": "resturent",
+    "name": "dsoi_web",
+    "short_name": "dsoi_web",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

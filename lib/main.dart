@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-
-import 'ScreenPage/LoginPage.dart';
-import 'ScreenPage/ManuItemPage.dart';
-import 'ScreenPage/ManuPage.dart';
-import 'ScreenPage/PinSetPage.dart';
-import 'ScreenPage/PinverifyPage.dart';
-import 'ScreenPage/buttombarPage.dart';
-import 'ScreenPage/splashPage.dart';
+import 'Routors/RoutorsPage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'DSOMI',
-debugShowCheckedModeBanner: false,
-     home:SplashScreen(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRoutes.splash, 
+      getPages: AppRoutes.routes,
     );
   }
 }
-
