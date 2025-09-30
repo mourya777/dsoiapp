@@ -5,7 +5,8 @@ class AppStrings {
 
   static const String orderNow = "order_now";
   static const String getMenu = "get_menu";
-  static const String login = "Login";
+  static const String login = "LOGIN";
+  static const String loding = "Loading...";
   static const String locationmhow = "DSOMI MHOW";
   static const String locationJabalpur = "DSOI JABALPUR";
   static const String dsoi = "DSOI";
