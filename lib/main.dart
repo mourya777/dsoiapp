@@ -13,12 +13,16 @@ import 'ScreenPage/ProfilePage.dart';
 import 'ScreenPage/TransactionPage.dart';
 import 'ScreenPage/buttombarPage.dart';
 import 'ScreenPage/splashPage.dart';
+import 'UtilsPage/SessionManager.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GlobalPrefs.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   const MyApp({super.key});
 
   @override

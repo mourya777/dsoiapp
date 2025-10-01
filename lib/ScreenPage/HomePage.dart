@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../ControllerPage/BottomNavController.dart';
 import '../ControllerPage/HomeController.dart';
 import '../UtilsPage/ColorsPage.dart';
 import '../UtilsPage/StringsPage.dart';
+import '../wedgetPage/GlobleList.dart';
+import '../wedgetPage/SnackBarMessage.dart';
+import 'OrderBillPage.dart';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../ControllerPage/BottomNavController.dart';
+import '../ControllerPage/HomeController.dart';
+import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
+import '../wedgetPage/SnackBarMessage.dart';
 import 'OrderBillPage.dart';
 
 class HomePage extends StatelessWidget {
@@ -232,6 +244,14 @@ class HomePage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
+                            // CircleAvatar(
+                            //   radius: 35,
+                            //   backgroundColor: Colors.deepPurple.shade100,
+                            //   backgroundImage: GlobalList.memberData["member_img"] != null
+                            //       ? NetworkImage(GlobalList.memberData["member_img"])
+                            //       : const AssetImage("Assets/Images/profile_images.jpeg")
+                            //   as ImageProvider,
+                            // ),
                             CircleAvatar(
                               radius: 35,
                               backgroundColor: Colors.deepPurple.shade100,
@@ -252,7 +272,7 @@ class HomePage extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                      controller.memberName.value,
+                                      "${GlobalList.memberData["member_fname"] ?? ""} ${GlobalList.memberData["member_lname"] ?? ""}",
                                       style: const TextStyle(
                                         fontSize: 18,
                                         color: AppColors.black,
@@ -265,13 +285,13 @@ class HomePage extends StatelessWidget {
                                 Row(
                                   children: [
                                     const Icon(
-                                      Icons.card_membership,
+                                      Icons.confirmation_number,
                                       color: AppColors.primary,
                                       size: 16,
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                      "Membership No.: 654UTC",
+                                      "Membership No.: ${GlobalList.memberData["member_no"] ?? ""}",
                                       style: const TextStyle(
                                         fontSize: 14,
                                         color: AppColors.black,
@@ -284,13 +304,13 @@ class HomePage extends StatelessWidget {
                                 Row(
                                   children: [
                                     const Icon(
-                                      Icons.card_membership,
+                                      Icons.group,
                                       color: AppColors.primary,
                                       size: 16,
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                      "MemberType: Main Branch",
+                                      "MemberType: ${GlobalList.memberData["member_type"] == 0 ? "MainMember" : "SubMember" ?? ""}",
                                       style: const TextStyle(
                                         fontSize: 14,
                                         color: AppColors.black,
@@ -324,7 +344,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "${controller.balance.value}/-",
+                                  "${GlobalList.memberData["member_balance"] ?? "0.00"}/-",
                                   style: const TextStyle(
                                     fontSize: 28,
                                     color: AppColors.black,
@@ -347,53 +367,20 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                controller.refresh();
-                              },
-                              child: Container(
-                                height: 34,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      AppColors.khaki,
-                                      AppColors.primary,
-                                      AppColors.secondary,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "REFRESH",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-
                             InkWell(
                               onTap: () =>
                                   controller.openTransactionForm(context),
                               child: Container(
                                 height: 34,
-                                width: 100,
+                                width: 150,
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
                                       AppColors.khaki,
-
                                       AppColors.primary,
                                       AppColors.secondary,
                                     ],
@@ -402,31 +389,40 @@ class HomePage extends StatelessWidget {
                                   ),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Center(
-                                  child: const Text(
-                                    "TRANSACTION",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                                child: const Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.account_balance_wallet,
+                                        color: AppColors.white,
+                                        size: 16,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        "TRANSACTION",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-
                             InkWell(
                               onTap: () {
                                 Get.to(OrderReceiptPage());
                               },
                               child: Container(
                                 height: 34,
-                                width: 70,
+                                width: 120,
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
                                       AppColors.khaki,
-
                                       AppColors.primary,
                                       AppColors.secondary,
                                     ],
@@ -435,14 +431,24 @@ class HomePage extends StatelessWidget {
                                   ),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Center(
-                                  child: const Text(
-                                    "VIEW",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                                child: const Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.remove_red_eye,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                      Text(
+                                        " VIEW",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -458,15 +464,65 @@ class HomePage extends StatelessWidget {
 
                 SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16,
+                        ),
+                        child: Text(
+                          "ORDER HISTORY",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                       Obx(
                         () => Column(
-                          children: controller.transactions.map((transaction) {
+                          children: controller.transactions.take(5).map((
+                            transactionObj,
+                          ) {
+                            final transaction =
+                                transactionObj as Map<String, dynamic>;
+                            final details =
+                                transaction["details"] as List<dynamic>? ?? [];
+
+                            // Categories list
+                            List<String> possibleCategories = [
+                              "Food",
+                              "Liquor",
+                              "FastFood",
+                              "Snack",
+                            ];
+                            // Alternate categories based on index
+                            String outerCategory =
+                                possibleCategories[controller.transactions
+                                        .indexOf(transaction) %
+                                    possibleCategories.length];
+
+                            // Status: dynamic from predefined list
+                            List<String> statuses = [
+                              "Pending",
+                              "Delivered",
+                              "Cancelled",
+                              "In Progress",
+                            ];
+                            String status =
+                                statuses[controller.transactions.indexOf(
+                                      transaction,
+                                    ) %
+                                    statuses.length];
+
+                            String date = transaction["date"] as String? ?? "";
+
                             return Container(
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppColors.white,
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
@@ -481,33 +537,60 @@ class HomePage extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // Outer: User Order Id
-                                    Text(
-                                      "User Order Id: ${controller.transactions.indexOf(transaction) + 1000}",
-                                      style: const TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Order ID: ${controller.transactions.indexOf(transaction) + 1000}",
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "Category: $outerCategory",
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "Status: $status",
+                                          style: TextStyle(
+                                            color: status == "Pending"
+                                                ? Colors.orange
+                                                : status == "Delivered"
+                                                ? Colors.green
+                                                : status == "Cancelled"
+                                                ? Colors.red
+                                                : Colors.blue,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     Text(
-                                      "500/-", // static total amount
+                                      date,
                                       style: const TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
                                 ),
                                 trailing: const Icon(
                                   Icons.expand_more,
-                                  color: AppColors.primary,
+                                  color: Colors.blue,
                                 ),
                                 children: [
-                                  const Divider(color: AppColors.khakiLight),
-
-                                  // Inner content with static values
+                                  const Divider(color: Colors.grey),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -517,85 +600,137 @@ class HomePage extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        buildRow("Order ID:", "1001"),
-                                        buildRow(
-                                          "Category:",
-                                          "Food, Snack, Liquor, FastFood",
-                                        ),
-                                        buildRow("Price:", "500/-"),
-                                        buildRow(
-                                          "Status:",
-                                          "Pending",
-                                          color: Colors.orange,
-                                        ),
-                                        const SizedBox(height: 12),
-                                      ],
-                                    ),
-                                  ),
-
-                                  // Buttons: Cancel next to View
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        InkWell(
-                                          onTap: () {},
-                                          child: Container(
+                                        ...details.map((itemObj) {
+                                          final item =
+                                              itemObj as Map<String, dynamic>;
+                                          String itemName =
+                                              item["item"] as String? ?? "";
+                                          String itemPrice =
+                                              item["price"] as String? ?? "";
+                                          return Padding(
                                             padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 6,
+                                              vertical: 3,
                                             ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.jungleGreen
-                                                  .withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  itemName,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "${itemPrice}/-",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            child: const Text(
-                                              "Cancel",
-                                              style: TextStyle(
-                                                color: AppColors.red,
-                                                fontWeight: FontWeight.bold,
+                                          );
+                                        }).toList(),
+                                        const SizedBox(height: 8),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              // Cancel Button
+                                              InkWell(
+                                                onTap: () {
+                                                  CustomSnackBar.show(
+                                                    title: "Cancelled",
+                                                    message:
+                                                        "Order ${controller.transactions.indexOf(transaction) + 1000} cancelled",
+                                                    icon: Icons.cancel,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    iconColor: Colors.white,
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 6,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.red
+                                                        .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: const Text(
+                                                    "Cancel",
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
+                                              const SizedBox(width: 8),
 
-                                        InkWell(
-                                          onTap: () {
-                                            Get.to(OrderReceiptPage());
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              gradient: const LinearGradient(
-                                                colors: [
-                                                  AppColors.khaki,
-
-                                                  AppColors.primary,
-                                                  AppColors.secondary,
-                                                ],
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
+                                              // View Button
+                                              InkWell(
+                                                onTap: () {
+                                                  Get.to(OrderReceiptPage());
+                                                },
+                                                child: Container(
+                                                  height: 34,
+                                                  width: 120,
+                                                  decoration: BoxDecoration(
+                                                    gradient:
+                                                        const LinearGradient(
+                                                          colors: [
+                                                            AppColors.khaki,
+                                                            AppColors.primary,
+                                                            AppColors.secondary,
+                                                          ],
+                                                          begin:
+                                                              Alignment.topLeft,
+                                                          end: Alignment
+                                                              .bottomRight,
+                                                        ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: const [
+                                                        Icon(
+                                                          Icons.remove_red_eye,
+                                                          color: Colors.white,
+                                                          size: 16,
+                                                        ),
+                                                        Text(
+                                                          " VIEW",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                            child: const Text(
-                                              "View",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -630,14 +765,8 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        if (hasMore) {
-                          Get.snackbar(
-                            "Info",
-                            "Showing all transactions",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: AppColors.primary,
-                            colorText: AppColors.white,
-                          );
+                        if (true) {
+                          Get.find<BottomNavController>().changeIndex(1);
                         } else {
                           Get.snackbar(
                             "Info",

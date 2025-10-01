@@ -39,7 +39,7 @@ class OrderReceiptPage extends StatelessWidget {
                         ),
                         Text(
                           "Order No: 251",
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 18),
                         ),
                       ],
                     ),
@@ -47,20 +47,21 @@ class OrderReceiptPage extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // ===== CUSTOMER INFO =====
                   const Text("Name: Amresh Dubey",
                       style: TextStyle(fontSize: 13)),
                   const Text("No: R-0302", style: TextStyle(fontSize: 13)),
-                  const Text("Staff: liquor", style: TextStyle(fontSize: 13)),
 
                   const SizedBox(height: 12),
 
-                  // ===== TABLE HEADER =====
+
                   Row(
                     children: const [
                       Expanded(
-                          child: Text("NAME",
+                          child:
+                          Text("NAME",  maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
+
                                   fontWeight: FontWeight.bold, fontSize: 13))),
                       SizedBox(width: 8),
                       Text("AMT.",
@@ -74,11 +75,12 @@ class OrderReceiptPage extends StatelessWidget {
                   ),
                   const Divider(thickness: 1),
 
-                  // ===== ITEM =====
+
                   Row(
                     children: const [
                       Expanded(
-                          child: Text("100 PIPER\n12 YRS",
+                          child: Text("100 PIPER12 YRS",  maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 13))),
                       SizedBox(width: 8),
                       Text("₹160.00", style: TextStyle(fontSize: 13)),

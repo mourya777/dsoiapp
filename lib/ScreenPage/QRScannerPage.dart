@@ -226,6 +226,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      extendBody: true,
       appBar: AdvancedAppBar(),
       body: _buildBody(size),
     );
@@ -310,14 +311,6 @@ class _QrScannerPageState extends State<QrScannerPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.golden),
-                onPressed: () {
-                  // Properly dispose camera before going back
-                  controller?.dispose();
-                  Get.back();
-                },
-              ),
               const Text(
                 "Scan Menu",
                 style: TextStyle(

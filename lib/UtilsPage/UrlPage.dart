@@ -8,12 +8,19 @@ class ApiConfig {
   static const String getMenuItems = "${baseUrl}get_menu_items";
   static const String productCat = "${baseUrl}product_cat";
   static const String orderNow = "${baseUrl}order_now";
+  static const String mobileNumberCheck = "${baseUrl}mobile_numbercheck";
+  static const String mobileOTPVerify = "${baseUrl}mobile_otpverify";
+  static const String memberMpinSet = "${baseUrl}member_mpinset";
+
+
 
 
   static const Map<String, String> headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
   };
+
+
 }
 class TempCart {
   static List<Map<String, dynamic>> menuItems = [];     // Manu / normal items

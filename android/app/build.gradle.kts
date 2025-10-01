@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.msoi"
+        applicationId = "com.dsoi"
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

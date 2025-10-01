@@ -52,7 +52,26 @@ class HomeController extends GetxController {
         {"item": "Annual Fee", "price": "₹5000"},
       ],
     },
+    {
+      "title": "Cafe",
+      "amount": "₹350",
+      "date": "14 Sept 2025",
+      "details": [
+        {"item": "Sandwich", "price": "₹150"},
+        {"item": "Coffee", "price": "₹200"},
+      ],
+    },
+    {
+      "title": "Book Store",
+      "amount": "₹800",
+      "date": "15 Sept 2025",
+      "details": [
+        {"item": "Notebook", "price": "₹300"},
+        {"item": "Pen Set", "price": "₹500"},
+      ],
+    },
   ].obs;
+
 
   void updateBalance(int newBalance) {
     balance.value = "₹$newBalance";
@@ -60,6 +79,8 @@ class HomeController extends GetxController {
 
   var imageFile = Rxn<File>();
   final ImagePicker _picker = ImagePicker();
+
+
 
   Future<void> attachScreenshot(BuildContext context) async {
     PermissionStatus status;
@@ -151,14 +172,30 @@ class HomeController extends GetxController {
                     child: Container(
                       color: Colors.grey[200],
                       padding: const EdgeInsets.all(16),
-                      child: Image.asset(
-                        'Assets/Images/images.png',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.contain,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'Assets/Images/images.png',
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(height: 12), // spacing between image and text
+                          const Text(
+                            "DSOI QR Code to Pay",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
                   ),
+
 
                   const SizedBox(height: 20),
 
@@ -224,7 +261,8 @@ class HomeController extends GetxController {
                   SizedBox(
                     width: size.width,
                     height: 50,
-                    child: ElevatedButton(
+                    child:
+                    ElevatedButton(
                       onPressed: () {
                         String amount = amountController.text.trim();
                         String desc = descController.text.trim();
@@ -241,7 +279,6 @@ class HomeController extends GetxController {
                           return;
                         }
 
-                        // Screenshot validation
                         if (attachedFilePath.value.isEmpty) {
                           CustomSnackBar.show(
                             title: "Error",
@@ -266,26 +303,60 @@ class HomeController extends GetxController {
                           return;
                         }
 
-                        CustomSnackBar.show(
-                          title: "Success",
-                          message:
-                              "Thanks for submit Payment Request,Our Admin Member will update you balance soon. Your Transaction id is: 584874445!",
-                          icon: Icons.check_circle,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          iconColor: Colors.white,
+                        // Show success popup
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false, // user must tap close button
+                          builder: (context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              title: const Text(
+                                "Success",
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: RichText(
+                                text: const TextSpan(
+                                  style: TextStyle(color: Colors.black87, fontSize: 16),
+                                  children: [
+                                    TextSpan(text: "Thanks for submit Payment Request,Our Admin Member will update you balance soon. Your Transaction id is: "),
+                                    TextSpan(
+                                      text: "584874445",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue, // highlight ID
+                                      ),
+                                    ),
+                                    TextSpan(text: "!"),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close popup
+                                    amountController.clear();
+                                    descController.clear();
+                                    attachedFilePath.value = '';
+                                    imageFile.value = null;
+                                  },
+                                  child: const Text(
+                                    "Close",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         );
-
-                        // Correct delay: 500 milliseconds
-                        Future.delayed(const Duration(milliseconds: 500), () {
-                          Navigator.pop(context); // Close BottomSheet
-                          amountController.clear();
-                          descController.clear();
-                          attachedFilePath.value = '';
-                          imageFile.value = null;
-                        });
                       },
-
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
@@ -319,6 +390,7 @@ class HomeController extends GetxController {
                         ),
                       ),
                     ),
+
                   ),
                 ],
               ),

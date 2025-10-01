@@ -25,6 +25,8 @@
 // "price": "200.00"
 // }
 // ]);
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+
 class GlobalCart {
   static List<Map<String, dynamic>> cartData = [
     {
@@ -70,3 +72,13 @@ class GlobalCart {
 // "price": "150.00"
 // }
 // ]);
+
+
+
+class GlobalList {
+  // Member data reactive map
+  static RxMap<String, dynamic> memberData = <String, dynamic>{}.obs;
+
+  // Orders reactive list
+  static RxList<Map<String, dynamic>> orders = <Map<String, dynamic>>[].obs;
+}

@@ -31,3 +31,31 @@ class SessionManager {
     await prefs.remove(_userKey);
   }
 }
+
+class GlobalPrefs {
+  static SharedPreferences? _prefs;
+
+  // Initialize (call only once in main.dart)
+  static Future init() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  // Save Member Data
+  static Future setMemberData(Map<String, dynamic> data) async {
+    await _prefs?.setString("member_data", jsonEncode(data));
+  }
+
+  // Get Member Data
+  static Map<String, dynamic>? getMemberData() {
+    final jsonStr = _prefs?.getString("member_data");
+    if (jsonStr != null) {
+      return jsonDecode(jsonStr);
+    }
+    return null;
+  }
+
+  // Clear Data (Logout)
+  static Future clear() async {
+    await _prefs?.clear();
+  }
+}

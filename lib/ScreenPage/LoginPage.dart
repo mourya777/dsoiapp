@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/LoginController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
 
 class LoginView extends StatelessWidget {
   final LoginController controller = Get.put(LoginController());
@@ -121,7 +122,7 @@ class LoginView extends StatelessWidget {
                               ),
                             )
                           : const Text(
-                              "SEND OTP",
+                        AppStrings.loginwithotp,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

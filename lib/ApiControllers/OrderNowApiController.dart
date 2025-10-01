@@ -11,7 +11,7 @@ class OrderApiService {
         Uri.parse(ApiConfig.orderNow),
         headers: ApiConfig.headers,
         body: jsonEncode(GlobalCart.cartData),
-      );
+      ).timeout(const Duration(seconds: 30));
 
       print("Order_Now Response Status: ${response.statusCode}");
       print("Order_Now Response Body: ${response.body}");

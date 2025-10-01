@@ -5,7 +5,8 @@ class AppStrings {
   // API Endpoints
   static const String orderNow = "order_now";
   static const String getMenu = "get_menu";
-  static const String login = "login";
+  static const String login = "LOGIN";
+  static const String loginwithotp = "LOGIN WITH OTP";
   static const String locationmhow="DSOMI MHOW";
   static const String locationJabalpur="DSOI JABALPUR";
   // Common Keys

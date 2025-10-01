@@ -1,9 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-/// ---------------- Controller ----------------
+// class TransactionHistoryController extends GetxController {
+//   var transactions = <Map<String, dynamic>>[].obs;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     loadTransactions();
+//   }
+//
+//   void loadTransactions() {
+//     // Dummy data for different categories
+//     transactions.value = [
+//       {
+//         "title": "Food",
+//         "amount": "- ₹500",
+//         "date": "12 Sept 2025",
+//         "details": {
+//           "orderId": "ORD1001",
+//           "category": "Pizza",
+//           "price": "₹500",
+//           "status": "Delivered",
+//         }
+//       },
+//       {
+//         "title": "Liquor",
+//         "amount": "- ₹800",
+//         "date": "11 Sept 2025",
+//         "details": {
+//           "orderId": "ORD1002",
+//           "category": "Whiskey",
+//           "price": "₹800",
+//           "status": "Pending",
+//         }
+//       },
+//       {
+//         "title": "Snack",
+//         "amount": "- ₹250",
+//         "date": "10 Sept 2025",
+//         "details": {
+//           "orderId": "ORD1003",
+//           "category": "Sandwich",
+//           "price": "₹250",
+//           "status": "Cancelled",
+//         }
+//       },
+//       {
+//         "title": "Fast Food",
+//         "amount": "- ₹350",
+//         "date": "09 Sept 2025",
+//         "details": {
+//           "orderId": "ORD1004",
+//           "category": "Burger",
+//           "price": "₹350",
+//           "status": "Delivered",
+//         }
+//       },
+//     ];
+//   }
+// }
+import 'package:get/get.dart';
+
 class TransactionHistoryController extends GetxController {
   var transactions = <Map<String, dynamic>>[].obs;
+  var searchDate = "".obs; // For date search
 
   @override
   void onInit() {
@@ -12,53 +73,58 @@ class TransactionHistoryController extends GetxController {
   }
 
   void loadTransactions() {
-    // Dummy data for different categories
     transactions.value = [
       {
         "title": "Food",
-        "amount": "- ₹500",
+        "amount": "- ₹500/-",
         "date": "12 Sept 2025",
-        "details": {
-          "orderId": "ORD1001",
-          "category": "Pizza",
-          "price": "₹500",
-          "status": "Delivered",
-        }
+        "details": [
+          {"item": "Pizza", "price": "₹200"},
+          {"item": "Burger", "price": "₹150"},
+          {"item": "Cold Drink", "price": "₹150"},
+        ],
+        "status": "Delivered",
       },
       {
         "title": "Liquor",
-        "amount": "- ₹800",
+        "amount": "- ₹800/-",
         "date": "11 Sept 2025",
-        "details": {
-          "orderId": "ORD1002",
-          "category": "Whiskey",
-          "price": "₹800",
-          "status": "Pending",
-        }
+        "details": [
+          {"item": "Whiskey", "price": "₹800"},
+        ],
+        "status": "Delivered",
       },
       {
         "title": "Snack",
-        "amount": "- ₹250",
+        "amount": "- ₹250/-",
         "date": "10 Sept 2025",
-        "details": {
-          "orderId": "ORD1003",
-          "category": "Sandwich",
-          "price": "₹250",
-          "status": "Cancelled",
-        }
+        "details": [
+          {"item": "Sandwich", "price": "₹250"},
+        ],
+        "status": "Delivered",
       },
       {
         "title": "Fast Food",
-        "amount": "- ₹350",
+        "amount": "- ₹350/-",
         "date": "09 Sept 2025",
-        "details": {
-          "orderId": "ORD1004",
-          "category": "Burger",
-          "price": "₹350",
-          "status": "Delivered",
-        }
+        "details": [
+          {"item": "Burger", "price": "₹350"},
+        ],
+        "status": "Delivered",
       },
     ];
+  }
+
+  List<Map<String, dynamic>> get filteredTransactions {
+    if (searchDate.value.isEmpty) {
+      return transactions;
+    }
+    return transactions
+        .where((tx) => tx["date"]
+        .toString()
+        .toLowerCase()
+        .contains(searchDate.value.toLowerCase()))
+        .toList();
   }
 }
 

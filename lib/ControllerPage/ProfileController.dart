@@ -41,7 +41,7 @@ class ProfileController extends GetxController {
                           Icon(Icons.person, color: AppColors.primary, size: 28),
                           SizedBox(width: 8),
                           Text(
-                            "MEMBER DETAILS",
+                            "SUBMEMBER DETAILS",
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
