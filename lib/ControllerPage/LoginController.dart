@@ -4,6 +4,7 @@ import '../ApiControllers/MobileNoLogin.dart';
 import '../ApiControllers/optverifyApi.dart';
 import '../ScreenPage/PinSetPage.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/SessionManager.dart';
 import '../wedgetPage/SnackBarMessage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -201,8 +202,8 @@ class LoginController extends GetxController {
   var mobileController = TextEditingController();
   var isLoading = false.obs;
 
-  String? memberId; // API se milega
-  String? otp; // API se milega
+  String? memberId;
+  String? otp;
 
   void sendOTP(BuildContext context) async {
     String mobile = mobileController.text.trim();
@@ -442,6 +443,11 @@ class LoginController extends GetxController {
       },
     );
   }
+  @override
+  void onInit() {
+    initDeviceToken();
+    super.onInit();
+  }
 
   @override
   void onClose() {
@@ -449,10 +455,23 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  // Device token generate function (button ke bahar)
   String generateDeviceToken() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = DateTime.now().microsecond.toString();
     return "$timestamp$random";
   }
+
+
+  Future<void> initDeviceToken() async {
+    String? existingToken = await GlobalStorage.getDeviceToken();
+    if (existingToken == null) {
+      String newToken = generateDeviceToken();
+      await GlobalStorage.saveDeviceToken(newToken);
+      print("New Device Token Generated: $newToken");
+    } else {
+      print("Existing Device Token: $existingToken");
+    }
+  }
+
+
 }

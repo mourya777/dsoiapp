@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../ApiControllers/PinSetApi.dart';
 import '../ScreenPage/PinverifyPage.dart';
 import '../UtilsPage/ColorsPage.dart';
@@ -60,7 +59,6 @@ class PinController extends GetxController {
 
     if (result["Status"] == 1) {
       await GlobalPrefs.setMemberData(result["result"]);
-
 
       CustomSnackBar.show(
         title: "Success",

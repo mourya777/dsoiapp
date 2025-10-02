@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../UtilsPage/UrlPage.dart';
+
 class PinVerifyService {
   static Future<Map<String, dynamic>> verifyPin(body) async {
     try {
       final response = await http.post(
-        Uri.parse("https://7eyeitsolutions.com/dsoijbp/angular/Dsoi_api_pos/member_mpincheck"),
+        Uri.parse(ApiConfig.memberMpinSet),
         headers: {
           'Content-Type': 'application/json',
         },

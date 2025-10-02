@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../UtilsPage/UrlPage.dart';
 
 class PinService {
-  /// body ko pass karein jsonEncode({...}) ke form me
   static Future<Map<String, dynamic>> setPin({
     required String body,
   }) async {

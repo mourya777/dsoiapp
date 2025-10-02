@@ -72,15 +72,12 @@ class HomeController extends GetxController {
     },
   ].obs;
 
-
   void updateBalance(int newBalance) {
     balance.value = "₹$newBalance";
   }
 
   var imageFile = Rxn<File>();
   final ImagePicker _picker = ImagePicker();
-
-
 
   Future<void> attachScreenshot(BuildContext context) async {
     PermissionStatus status;
@@ -181,7 +178,9 @@ class HomeController extends GetxController {
                             height: 150,
                             fit: BoxFit.contain,
                           ),
-                          const SizedBox(height: 12), // spacing between image and text
+                          const SizedBox(
+                            height: 12,
+                          ), // spacing between image and text
                           const Text(
                             "DSOI QR Code to Pay",
                             style: TextStyle(
@@ -195,7 +194,6 @@ class HomeController extends GetxController {
                       ),
                     ),
                   ),
-
 
                   const SizedBox(height: 20),
 
@@ -261,8 +259,7 @@ class HomeController extends GetxController {
                   SizedBox(
                     width: size.width,
                     height: 50,
-                    child:
-                    ElevatedButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         String amount = amountController.text.trim();
                         String desc = descController.text.trim();
@@ -306,7 +303,8 @@ class HomeController extends GetxController {
                         // Show success popup
                         showDialog(
                           context: context,
-                          barrierDismissible: false, // user must tap close button
+                          barrierDismissible:
+                              false, // user must tap close button
                           builder: (context) {
                             return AlertDialog(
                               shape: RoundedRectangleBorder(
@@ -321,9 +319,15 @@ class HomeController extends GetxController {
                               ),
                               content: RichText(
                                 text: const TextSpan(
-                                  style: TextStyle(color: Colors.black87, fontSize: 16),
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 16,
+                                  ),
                                   children: [
-                                    TextSpan(text: "Thanks for submit Payment Request,Our Admin Member will update you balance soon. Your Transaction id is: "),
+                                    TextSpan(
+                                      text:
+                                          "Thanks for submit Payment Request,Our Admin Member will update you balance soon. Your Transaction id is: ",
+                                    ),
                                     TextSpan(
                                       text: "584874445",
                                       style: TextStyle(
@@ -390,7 +394,6 @@ class HomeController extends GetxController {
                         ),
                       ),
                     ),
-
                   ),
                 ],
               ),

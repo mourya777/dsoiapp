@@ -185,13 +185,24 @@ class ProfileController extends GetxController {
                       ),
                     ),
                     onPressed: () async {
-                      Get.back();
+
                       Get.back(); // Close dialog
+                      await GlobalPrefs.clear();
                       await SessionManager.logout();
+                      await GlobalStorage.deleteDeviceToken();
 
                       Get.delete<SplashController>();
 
                       Get.offAll(() => SplashScreen());
+                      CustomSnackBar.show(
+                        title: "Logout",
+                        message: "You have been successfully logged out!",
+                        icon: Icons.logout,
+                        backgroundColor: AppColors.primary, // green color for success
+                        textColor: AppColors.white,
+                        iconColor: AppColors.white,
+                      );
+
                     },
                     label: const Text(
                       "Yes",
@@ -328,9 +339,9 @@ class ProfileController extends GetxController {
                               title: "Error",
                               message: "All fields are required!",
                               icon: Icons.close,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
+                              backgroundColor: AppColors.red,
+                              textColor: AppColors.white,
+                              iconColor: AppColors.white,
                             );
                           } else if (newPin.text.length != 6 ||
                               confirmPin.text.length != 6 ||
@@ -340,8 +351,8 @@ class ProfileController extends GetxController {
                               message: "PIN must be exactly 6 digits!",
                               icon: Icons.close,
                               backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
+                              textColor: AppColors.white,
+                              iconColor: AppColors.white,
                             );
                           } else if (newPin.text != confirmPin.text) {
                             CustomSnackBar.show(
@@ -349,8 +360,8 @@ class ProfileController extends GetxController {
                               message: "New PIN and Confirm PIN do not match!",
                               icon: Icons.close,
                               backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
+                              textColor: AppColors.white,
+                              iconColor: AppColors.white,
                             );
                           } else {
                             Get.offAll(SplashScreen());
@@ -358,9 +369,9 @@ class ProfileController extends GetxController {
                               title: "Success",
                               message: "PIN reset successfully!",
                               icon: Icons.check_circle,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
+                              backgroundColor: AppColors.primary,
+                              textColor: AppColors.white,
+                              iconColor: AppColors.white,
                               // durationSeconds: 4, // optional
                             );
                           }

@@ -11,19 +11,18 @@ class ApiConfig {
   static const String mobileNumberCheck = "${baseUrl}mobile_numbercheck";
   static const String mobileOTPVerify = "${baseUrl}mobile_otpverify";
   static const String memberMpinSet = "${baseUrl}member_mpinset";
-
-
-
+  static const String memberOrderDateWise = "${baseUrl}member_orderdatewise";
+  static const String memberTransactionDateWise =
+      "${baseUrl}member_transctiondatewise";
 
   static const Map<String, String> headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
   };
-
-
 }
+
 class TempCart {
-  static List<Map<String, dynamic>> menuItems = [];     // Manu / normal items
-  static List<Map<String, dynamic>> liquorItems = [];   // Liquor items
-  static List<Map<String, dynamic>> fastFoodItems = []; // Fast Food items
+  static List<Map<String, dynamic>> menuItems = [];
+  static List<Map<String, dynamic>> liquorItems = [];
+  static List<Map<String, dynamic>> fastFoodItems = [];
 }

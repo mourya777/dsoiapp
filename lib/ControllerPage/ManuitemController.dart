@@ -24,21 +24,20 @@ class CartController extends GetxController {
     getUserId();
     fetchProducts();
   }
+
   Future<void> getUserId() async {
     final user = await SessionManager.getUser();
     if (user != null) {
       print("User ID: ${user.records.memberId}");
       GlobalCart.cartData[0]["member_id"] = "${user.records.memberId}";
       print("member id this!${GlobalCart.cartData[0]["member_id"]}");
-
     } else {
       print("member id this!${GlobalCart.cartData[0]["member_id"]}");
     }
   }
+
   int getQtyForItem(Product item) {
-    final existing = cartItems.firstWhereOrNull(
-          (e) => e['id'] == item.prdId,
-    );
+    final existing = cartItems.firstWhereOrNull((e) => e['id'] == item.prdId);
     return existing?['qty'] ?? 0;
   }
 
@@ -81,7 +80,9 @@ class CartController extends GetxController {
         TempCart.fastFoodItems.removeWhere((e) => e['id'] == item.prdId);
       }
     } else {
-      int tempIndex = TempCart.menuItems.indexWhere((e) => e['id'] == item.prdId);
+      int tempIndex = TempCart.menuItems.indexWhere(
+        (e) => e['id'] == item.prdId,
+      );
       if (qty <= 0) {
         if (tempIndex != -1) TempCart.menuItems.removeAt(tempIndex);
       } else {
@@ -101,9 +102,6 @@ class CartController extends GetxController {
       }
     }
   }
-
-
-
 
   void fetchProducts() async {
     try {
@@ -131,7 +129,7 @@ class CartController extends GetxController {
 
   void addItem(Map<String, dynamic> item) {
     int index = cartItems.indexWhere(
-          (e) => e['name'] == item['name'] && e['type'] == item['type'],
+      (e) => e['name'] == item['name'] && e['type'] == item['type'],
     );
 
     int addedQty = item['qty'] ?? 1;
@@ -146,7 +144,8 @@ class CartController extends GetxController {
         cartItems[index]['qty'] = (cartItems[index]['qty'] ?? 1) + addedQty;
       }
     } else {
-      if (item['type'] != 'liquor') item['qty'] = addedQty;
+      if (item['type'] != 'liquor')
+        item['qty'] = addedQty;
       else {
         item['small'] = item['small'] ?? 0;
         item['large'] = item['large'] ?? 0;

@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../ApiControllers/TransactionApi.dart';
+import '../UtilsPage/SessionManager.dart';
 
 // class TransactionHistoryController extends GetxController {
 //   var transactions = <Map<String, dynamic>>[].obs;
+//   var searchDate = "".obs;
 //
 //   @override
 //   void onInit() {
@@ -10,61 +12,48 @@ import 'package:get/get.dart';
 //     loadTransactions();
 //   }
 //
-//   void loadTransactions() {
-//     // Dummy data for different categories
-//     transactions.value = [
-//       {
-//         "title": "Food",
-//         "amount": "- ₹500",
-//         "date": "12 Sept 2025",
-//         "details": {
-//           "orderId": "ORD1001",
-//           "category": "Pizza",
-//           "price": "₹500",
-//           "status": "Delivered",
-//         }
-//       },
-//       {
-//         "title": "Liquor",
-//         "amount": "- ₹800",
-//         "date": "11 Sept 2025",
-//         "details": {
-//           "orderId": "ORD1002",
-//           "category": "Whiskey",
-//           "price": "₹800",
-//           "status": "Pending",
-//         }
-//       },
-//       {
-//         "title": "Snack",
-//         "amount": "- ₹250",
-//         "date": "10 Sept 2025",
-//         "details": {
-//           "orderId": "ORD1003",
-//           "category": "Sandwich",
-//           "price": "₹250",
-//           "status": "Cancelled",
-//         }
-//       },
-//       {
-//         "title": "Fast Food",
-//         "amount": "- ₹350",
-//         "date": "09 Sept 2025",
-//         "details": {
-//           "orderId": "ORD1004",
-//           "category": "Burger",
-//           "price": "₹350",
-//           "status": "Delivered",
-//         }
-//       },
-//     ];
+//   void loadTransactions() async {
+//     print('Api calling');
+//     final memberData = GlobalPrefs.getMemberData();
+//     print("Member Data: $memberData");
+//
+//     if (memberData != null) {
+//       String? token = await GlobalStorage.getDeviceToken();
+//       print("Device Token: $token");
+//       final body = {
+//         "member_id":"1",
+//         "member_code":"053319822544",
+//         "member_date":"2019-11-20",
+//         "device_token":"12121313131311212"
+//         // "member_id": memberData["member_id"] ?? memberData["member_no"] ?? "",
+//         // "member_code": memberData["member_code"] ?? "",
+//         // "device_token": token ?? "",
+//         // "member_date": memberData["member_date"] ??
+//         //     DateTime.now().toIso8601String().split("T")[0],
+//       };
+//
+//       print("Sending API Request with Body: $body");
+//       final list = await TransactionApiService.getTransactions(body);
+//       print("Transactions Loaded: $list");
+//       transactions.assignAll(list);
+//     } else {
+//       print("Member data is null");
+//     }
+//   }
+//
+//   List<Map<String, dynamic>> get filteredTransactions {
+//     if (searchDate.value.isEmpty) return transactions;
+//     return transactions
+//         .where((tx) => tx["date"]
+//         .toString()
+//         .toLowerCase()
+//         .contains(searchDate.value.toLowerCase()))
+//         .toList();
 //   }
 // }
-import 'package:get/get.dart';
-
 class TransactionHistoryController extends GetxController {
   var transactions = <Map<String, dynamic>>[].obs;
-  var searchDate = "".obs; // For date search
+  var searchText = "".obs;
 
   @override
   void onInit() {
@@ -72,59 +61,39 @@ class TransactionHistoryController extends GetxController {
     loadTransactions();
   }
 
-  void loadTransactions() {
-    transactions.value = [
-      {
-        "title": "Food",
-        "amount": "- ₹500/-",
-        "date": "12 Sept 2025",
-        "details": [
-          {"item": "Pizza", "price": "₹200"},
-          {"item": "Burger", "price": "₹150"},
-          {"item": "Cold Drink", "price": "₹150"},
-        ],
-        "status": "Delivered",
-      },
-      {
-        "title": "Liquor",
-        "amount": "- ₹800/-",
-        "date": "11 Sept 2025",
-        "details": [
-          {"item": "Whiskey", "price": "₹800"},
-        ],
-        "status": "Delivered",
-      },
-      {
-        "title": "Snack",
-        "amount": "- ₹250/-",
-        "date": "10 Sept 2025",
-        "details": [
-          {"item": "Sandwich", "price": "₹250"},
-        ],
-        "status": "Delivered",
-      },
-      {
-        "title": "Fast Food",
-        "amount": "- ₹350/-",
-        "date": "09 Sept 2025",
-        "details": [
-          {"item": "Burger", "price": "₹350"},
-        ],
-        "status": "Delivered",
-      },
-    ];
+  void loadTransactions() async {
+    final memberData = GlobalPrefs.getMemberData();
+
+    if (memberData != null) {
+      final body = {
+        "member_id": "1",
+        "member_code": "053319822544",
+        "member_date": "2019-11-20",
+        "device_token": "12121313131311212"
+      };
+
+      final list = await TransactionApiService.getTransactions(body);
+
+      if (list.isNotEmpty) {
+        // Sort by date descending
+        list.sort((a, b) => b["date"].compareTo(a["date"]));
+
+        transactions.assignAll(list);
+      }
+    }
   }
 
   List<Map<String, dynamic>> get filteredTransactions {
-    if (searchDate.value.isEmpty) {
+    if (searchText.value.isEmpty) {
       return transactions;
     }
-    return transactions
-        .where((tx) => tx["date"]
-        .toString()
-        .toLowerCase()
-        .contains(searchDate.value.toLowerCase()))
-        .toList();
+
+    return transactions.where((tx) {
+      final id = tx["tran_id"].toString().toLowerCase();
+      final date = tx["date"].toString().toLowerCase();
+      final query = searchText.value.toLowerCase();
+
+      return id.contains(query) || date.contains(query);
+    }).toList();
   }
 }
-
