@@ -249,22 +249,68 @@ class _PinVerifyPageState extends State<PinVerifyPage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: ElevatedButton(
+                    // onPressed: isLoading
+                    //     ? null
+                    //     : () async {
+                    //         setState(() => isLoading = true);
+                    //         final result = await controller.verifyPin();
+                    //
+                    //         setState(() => isLoading = false);
+                    //         print('tttttttttttttttttt${result['Status']}');
+                    //
+                    //         if (result["Status"] == 1) {
+                    //           GlobalList.memberData.value =
+                    //               result["result"] ?? {};
+                    //
+                    //           GlobalList.orders.assignAll(
+                    //             List<Map<String, dynamic>>.from(
+                    //               result["order"] ?? [],
+                    //             ),
+                    //           );
+                    //
+                    //           CustomSnackBar.show(
+                    //             title: "Success",
+                    //             message:
+                    //                 result["Msg"] ??
+                    //                 "PIN Verified Successfully",
+                    //             icon: Icons.check_circle,
+                    //             backgroundColor: AppColors.primary,
+                    //             textColor: Colors.white,
+                    //             iconColor: Colors.white,
+                    //           );
+                    //           Get.offAll(() => BottomNavPage());
+                    //         } else {
+                    //           CustomSnackBar.show(
+                    //             title: "Error",
+                    //             message: result["Msg"] ?? "Incorrect PIN",
+                    //             icon: Icons.close,
+                    //             backgroundColor: Colors.red,
+                    //             textColor: Colors.white,
+                    //             iconColor: Colors.white,
+                    //           );
+                    //         }
+                    //       },
                     onPressed: isLoading
                         ? null
                         : () async {
                             setState(() => isLoading = true);
                             final result = await controller.verifyPin();
+
                             setState(() => isLoading = false);
 
                             if (result["Status"] == 1) {
+
                               GlobalList.memberData.value =
-                                  result["result"] ?? {};
+                                  (result["result"] as List).isNotEmpty
+                                  ? result["result"][0]
+                                  : {};
 
                               GlobalList.orders.assignAll(
                                 List<Map<String, dynamic>>.from(
                                   result["order"] ?? [],
                                 ),
                               );
+
                               CustomSnackBar.show(
                                 title: "Success",
                                 message:
@@ -275,7 +321,10 @@ class _PinVerifyPageState extends State<PinVerifyPage> {
                                 textColor: Colors.white,
                                 iconColor: Colors.white,
                               );
-                              Get.offAll(() => BottomNavPage());
+
+                              Get.offAll(
+                                () => BottomNavPage(),
+                              ); // ✅ ab navigate karega
                             } else {
                               CustomSnackBar.show(
                                 title: "Error",
@@ -287,6 +336,7 @@ class _PinVerifyPageState extends State<PinVerifyPage> {
                               );
                             }
                           },
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,

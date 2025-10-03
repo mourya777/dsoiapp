@@ -5,7 +5,6 @@ import '../ControllerPage/ManuController.dart';
 import '../UtilsPage/ColorsPage.dart';
 import '../UtilsPage/SessionManager.dart';
 import '../UtilsPage/StringsPage.dart';
-import '../wedgetPage/AppBar.dart';
 import '../wedgetPage/CustomeText.dart';
 import '../wedgetPage/GlobleList.dart';
 import '../wedgetPage/VerifyRFIDPopup.dart';

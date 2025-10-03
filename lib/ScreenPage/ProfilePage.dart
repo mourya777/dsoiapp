@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../ControllerPage/ProfileController.dart';
 import '../UtilsPage/ColorsPage.dart';
+import '../UtilsPage/StringsPage.dart';
 import '../wedgetPage/AppBar.dart';
+import '../wedgetPage/GlobleList.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -39,45 +41,56 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     const CircleAvatar(
                       radius: 50,
-                      backgroundImage:
-                      AssetImage("Assets/Images/profile_images.jpeg"),
+                      backgroundImage: AssetImage(
+                        "Assets/Images/profile_images.jpeg",
+                      ),
                     ),
                     const SizedBox(width: 16),
-                    Obx(() => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profileController.homeController.memberName.value,
-                          style: const TextStyle(
+                    Obx(
+                      () => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${GlobalList.memberData["member_fname"] ?? ""} ${GlobalList.memberData["member_lname"] ?? ""}",
+
+                            style: const TextStyle(
                               color: AppColors.black,
                               fontSize: 24,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.person,color: AppColors.primary,),
-                            Text(
-                              profileController.homeController.memberType.value,
-                              style: const TextStyle(
-                                  color: AppColors.black, fontSize: 16),
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.location_on,color: AppColors.primary,),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(Icons.person, color: AppColors.primary),
+                              Text(
+                                "${GlobalList.memberData["member_type"] != null ? (GlobalList.memberData["member_type"].toString() == "0" ? "MainMember" : "SubMember") : ""}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.black,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on, color: AppColors.primary),
 
-                            Text(
-                              profileController.homeController.location.value,
-                              style: const TextStyle(
-                                  color: AppColors.black, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ))
+                              Text(
+                                AppStrings.locationJabalpur,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.black,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -85,19 +98,22 @@ class ProfilePage extends StatelessWidget {
 
               // Buttons
               _buildProfileButton(
-                  icon: Icons.edit,
-                  text: "SUBMEMBER DETAILS",
-                  onTap: () => profileController.showUserDetailsSheet(context)),
+                icon: Icons.edit,
+                text: "SUBMEMBER DETAILS",
+                onTap: () => profileController.showUserDetailsSheet(context),
+              ),
               const SizedBox(height: 16),
               _buildProfileButton(
-                  icon: Icons.lock_reset,
-                  text: "RESET PIN",
-                  onTap: () => profileController.showResetPinSheet(context)),
+                icon: Icons.lock_reset,
+                text: "RESET PIN",
+                onTap: () => profileController.showResetPinSheet(context),
+              ),
               const SizedBox(height: 16),
               _buildProfileButton(
-                  icon: Icons.logout,
-                  text: "LOGOUT",
-                  onTap: () => profileController.showLogoutConfirmation(context)),
+                icon: Icons.logout,
+                text: "LOGOUT",
+                onTap: () => profileController.showLogoutConfirmation(context),
+              ),
             ],
           ),
         ),
@@ -105,10 +121,11 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileButton(
-      {required IconData icon,
-        required String text,
-        required VoidCallback onTap}) {
+  Widget _buildProfileButton({
+    required IconData icon,
+    required String text,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -131,7 +148,10 @@ class ProfilePage extends StatelessWidget {
             Text(
               text,
               style: const TextStyle(
-                  color: AppColors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                color: AppColors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

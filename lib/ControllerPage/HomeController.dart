@@ -12,69 +12,17 @@ class HomeController extends GetxController {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController descController = TextEditingController();
   var attachedFilePath = ''.obs; // ✅ Reactive variable
+  var transactions = <Map<String, dynamic>>[].obs;
+  var searchText = "".obs;
+  var isLoading = true.obs;
 
-  var memberName = "Rahul Sharma".obs;
-  var membershipNo = "12345".obs;
-  var balance = "₹1500".obs;
-  var memberType = "Main Member".obs;
-  var location = "DOI JABALPUR".obs;
-  var mobileNo = "9876543210".obs;
 
   var recentTransactionTitle = "Food Court".obs;
   var recentTransactionAmount = "₹500".obs;
   var recentTransactionDate = "12 Sept 2025".obs;
 
-  var transactions = [
-    {
-      "title": "Order",
-      "amount": "₹500",
-      "date": "12 Sept 2025",
-      "details": [
-        {"item": "Pizza", "price": "₹200"},
-        {"item": "Burger", "price": "₹150"},
-        {"item": "Cold Drink", "price": "₹150"},
-      ],
-    },
-    {
-      "title": "Gym",
-      "amount": "₹1200",
-      "date": "11 Sept 2025",
-      "details": [
-        {"item": "Personal Training", "price": "₹800"},
-        {"item": "Protein Shake", "price": "₹400"},
-      ],
-    },
-    {
-      "title": "Membership Renewal",
-      "amount": "₹5000",
-      "date": "05 Sept 2025",
-      "details": [
-        {"item": "Annual Fee", "price": "₹5000"},
-      ],
-    },
-    {
-      "title": "Cafe",
-      "amount": "₹350",
-      "date": "14 Sept 2025",
-      "details": [
-        {"item": "Sandwich", "price": "₹150"},
-        {"item": "Coffee", "price": "₹200"},
-      ],
-    },
-    {
-      "title": "Book Store",
-      "amount": "₹800",
-      "date": "15 Sept 2025",
-      "details": [
-        {"item": "Notebook", "price": "₹300"},
-        {"item": "Pen Set", "price": "₹500"},
-      ],
-    },
-  ].obs;
 
-  void updateBalance(int newBalance) {
-    balance.value = "₹$newBalance";
-  }
+
 
   var imageFile = Rxn<File>();
   final ImagePicker _picker = ImagePicker();
@@ -404,21 +352,4 @@ class HomeController extends GetxController {
     );
   }
 
-  void refreshData() {
-    balance.value = "₹1500";
-    transactions.clear();
-    transactions.addAll([
-      {
-        "title": "Food Court",
-        "amount": "₹500",
-        "date": "12 Sept 2025",
-        "details": [
-          {"item": "Pizza", "price": "₹200"},
-          {"item": "Burger", "price": "₹150"},
-          {"item": "Cold Drink", "price": "₹150"},
-        ],
-      },
-      // add other transactions
-    ]);
-  }
 }

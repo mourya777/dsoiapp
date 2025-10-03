@@ -14,7 +14,6 @@ class TransactionApiService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("kkkkkkkkkkkkkkkkkkkkkkkkk$body$data");
 
         if (data is Map && data["order"] != null) {
           return List<Map<String, dynamic>>.from(data["order"]);

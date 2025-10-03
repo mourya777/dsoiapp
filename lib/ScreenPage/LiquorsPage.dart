@@ -877,7 +877,7 @@ class LiquorPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    final balanceString = homeController.balance.value
+                    final balanceString = GlobalList.memberData["member_balance"] ?? "0.00"
                         .replaceAll(RegExp(r'[^0-9]'), '');
                     final balance = int.tryParse(balanceString) ?? 0;
                     final total = controller.getTotalPrice();

@@ -7,10 +7,11 @@ class ApiConfig {
   static const String getAttendence = "${baseUrl}get_attendence";
   static const String getMenuItems = "${baseUrl}get_menu_items";
   static const String productCat = "${baseUrl}product_cat";
-  static const String orderNow = "${baseUrl}order_now";
+  static const String orderNow = "${baseUrl}order_nowwithallcat";
   static const String mobileNumberCheck = "${baseUrl}mobile_numbercheck";
   static const String mobileOTPVerify = "${baseUrl}mobile_otpverify";
   static const String memberMpinSet = "${baseUrl}member_mpinset";
+  static const String memberMpinCheck = "${baseUrl}member_mpincheck";
   static const String memberOrderDateWise = "${baseUrl}member_orderdatewise";
   static const String memberTransactionDateWise =
       "${baseUrl}member_transctiondatewise";

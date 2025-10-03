@@ -249,10 +249,21 @@ import '../wedgetPage/AppBar.dart';
 import '../wedgetPage/GlobleList.dart';
 import 'OrderBillPage.dart';
 
-class OrderHistoryPage extends StatelessWidget {
-  final OrderHistoryController controller = Get.put(OrderHistoryController());
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../ControllerPage/TransactionController.dart';
+import '../UtilsPage/ColorsPage.dart';
+import '../wedgetPage/AppBar.dart';
+import '../wedgetPage/GlobleList.dart';
+import 'OrderBillPage.dart';
 
-  OrderHistoryPage({super.key});
+class TransactionHistoryPage extends StatelessWidget {
+  final TransactionHistoryController controller = Get.put(
+    TransactionHistoryController(),
+  );
+  final TextEditingController searchController = TextEditingController();
+
+  TransactionHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -262,18 +273,38 @@ class OrderHistoryPage extends StatelessWidget {
         color: AppColors.primary.withOpacity(0.2),
         child: Column(
           children: [
-            // ===== SEARCH FIELD =====
+            // ===== SEARCH FIELD WITH CALENDAR =====
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: TextField(
+                controller: searchController,
                 decoration: InputDecoration(
-                  labelText: "Search by Transaction ID or Date",
+                  labelText: "Search by Date",
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   prefixIcon: const Icon(Icons.search),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (searchController.text.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            searchController.clear();
+                            controller.searchDate.value = "";
+                          },
+                        ),
+                      IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () {
+                          _selectDate(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 onChanged: (value) {
                   controller.searchDate.value = value;
@@ -284,7 +315,21 @@ class OrderHistoryPage extends StatelessWidget {
             // ===== LIST VIEW =====
             Expanded(
               child: Obx(() {
-                if (controller.filteredTransactions.isEmpty) {
+                // ✅ Loading state check करें
+                final isLoading = controller.isLoading.value;
+                final transactions = controller.filteredTransactions;
+                final hasData = transactions.isNotEmpty;
+
+                if (isLoading) {
+                  // ✅ Loading indicator
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                    ),
+                  );
+                }
+
+                if (!hasData) {
                   return const Center(
                     child: Text(
                       "No transactions available",
@@ -298,25 +343,32 @@ class OrderHistoryPage extends StatelessWidget {
                     top: 6,
                     bottom: MediaQuery.of(context).padding.bottom + 12,
                   ),
-                  itemCount: controller.filteredTransactions.length,
+                  itemCount: transactions.length,
                   itemBuilder: (context, index) {
-                    final transaction = controller.filteredTransactions[index];
+                    final transaction = transactions[index];
                     final details = (transaction["details"] as List<dynamic>?) ?? [];
 
                     final totalAmount = details.fold<double>(
                       0,
                           (sum, item) =>
-                      sum + double.tryParse(item["price"]?.toString() ?? "0")!,
+                      sum +
+                          double.tryParse(item["price"]?.toString() ?? "0")!,
                     );
 
-                    final statuses = ["Pending", "Delivered", "Cancelled", "In Progress"];
-                    final possibleCategories = ["Food", "Liquor", "FastFood", "Snack"];
-                    final outerCategory =
-                    possibleCategories[index % possibleCategories.length];
-                    final status = statuses[index % statuses.length];
+                    // Parse date and time
+                    final datetime = transaction["tran_datetime"]?.toString() ?? "";
+                    final datePart = datetime.split(" ").isNotEmpty
+                        ? datetime.split(" ").first
+                        : "";
+                    final timePart = datetime.split(" ").length > 1
+                        ? datetime.split(" ").last
+                        : "";
 
                     return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 12,
+                      ),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -337,27 +389,17 @@ class OrderHistoryPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Transaction: ${transaction["tran_id"]}",
+                                  "Transaction Id: ${transaction["tran_id"]}",
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 16),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "Category: $outerCategory",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500, fontSize: 14),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Status: $status",
+                                  "Status: Success",
                                   style: TextStyle(
-                                    color: status == "Pending"
-                                        ? Colors.orange
-                                        : status == "Delivered"
-                                        ? Colors.green
-                                        : status == "Cancelled"
-                                        ? Colors.red
-                                        : Colors.blue,
+                                    color: Colors.green,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14,
                                   ),
@@ -368,19 +410,15 @@ class OrderHistoryPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  transaction["tran_date"] ?? '',
+                                  datePart,
                                   style: const TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500),
+                                    color: Colors.black54,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                                 Text(
-                                  transaction["tran_datetime"] != null
-                                      ? transaction["tran_datetime"]
-                                      .toString()
-                                      .split(' ')
-                                      .last
-                                      : '',
+                                  timePart,
                                   style: const TextStyle(
                                     color: Colors.black54,
                                     fontSize: 12,
@@ -390,48 +428,83 @@ class OrderHistoryPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        trailing: const Icon(Icons.expand_more, color: Colors.blue),
+                        trailing: const Icon(
+                          Icons.expand_more,
+                          color: Colors.blue,
+                        ),
                         children: [
                           const Divider(color: Colors.grey),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // ITEMS LIST
                                 ...details.map((item) {
                                   final map = item as Map<String, dynamic>;
-                                  return Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(map["item"] ?? ""),
-                                      Text("₹${map["price"] ?? "0"}"),
-                                    ],
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          map["item"] ?? "",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        Text(
+                                          "₹${map["price"] ?? "0"}",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 }).toList(),
 
-                                const Divider(color: Colors.black54),
+                                // AMOUNT ROW
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Amount",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        "₹${transaction["tran_amount"] ?? totalAmount.toStringAsFixed(2)}/-",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
 
-                                // TOTAL ROW
+                                const SizedBox(height: 16),
+
                                 Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      "Total: ₹${totalAmount.toStringAsFixed(2)}/-",
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
                                     InkWell(
                                       onTap: () {
                                         final memberData = GlobalList.memberData;
-                                        Get.to(() => OrderReceiptPage(
-                                          transaction: transaction,
-                                          memberData: memberData,
-                                        ));
+                                        Get.to(
+                                              () => OrderReceiptPage(
+                                            transaction: transaction,
+                                            memberData: memberData,
+                                          ),
+                                        );
                                       },
                                       child: Container(
                                         height: 34,
@@ -441,28 +514,29 @@ class OrderHistoryPage extends StatelessWidget {
                                             colors: [
                                               AppColors.khaki,
                                               AppColors.primary,
-                                              AppColors.secondary
+                                              AppColors.secondary,
                                             ],
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                           ),
-                                          borderRadius:
-                                          BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(6),
                                         ),
                                         child: const Center(
                                           child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Icon(Icons.remove_red_eye,
-                                                  color: Colors.white,
-                                                  size: 16),
+                                              Icon(
+                                                Icons.remove_red_eye,
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
                                               Text(
                                                 " VIEW",
                                                 style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12),
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -480,19 +554,38 @@ class OrderHistoryPage extends StatelessWidget {
                   },
                 );
               }),
-            )
+            ),
           ],
         ),
       ),
     );
   }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      final formattedDate =
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+
+      controller.searchDate.value = formattedDate;
+      searchController.text = formattedDate;
+    }
+  }
 }
+
+// OrderReceiptPage code remains same...
 class OrderReceiptPage extends StatelessWidget {
   final Map<String, dynamic> transaction;
   final Map<String, dynamic>? memberData;
 
   const OrderReceiptPage({Key? key, required this.transaction, this.memberData})
-      : super(key: key);
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -500,12 +593,14 @@ class OrderReceiptPage extends StatelessWidget {
         "${GlobalList.memberData["member_fname"] ?? ""} ${GlobalList.memberData["member_lname"] ?? ""}";
     final no = GlobalList.memberData["member_code"] ?? "N/A";
 
-    // Split date and time
     final datetime = transaction["tran_datetime"]?.toString() ?? "";
-    final datePart = datetime.split(" ").isNotEmpty ? datetime.split(" ").first : "";
-    final timePart = datetime.split(" ").length > 1 ? datetime.split(" ").last : "";
+    final datePart = datetime.split(" ").isNotEmpty
+        ? datetime.split(" ").first
+        : "";
+    final timePart = datetime.split(" ").length > 1
+        ? datetime.split(" ").last
+        : "";
 
-    // Details list (safe)
     final details = (transaction["details"] as List<dynamic>?) ?? [];
 
     return Scaffold(
@@ -535,7 +630,7 @@ class OrderReceiptPage extends StatelessWidget {
                           style: const TextStyle(fontSize: 12),
                         ),
                         Text(
-                          "Order No: ${transaction["tran_id"]}",
+                          "Transaction No: ${transaction["tran_id"]}",
                           style: const TextStyle(fontSize: 18),
                         ),
                       ],
@@ -549,7 +644,6 @@ class OrderReceiptPage extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // ITEMS HEADER
                   Row(
                     children: const [
                       Expanded(

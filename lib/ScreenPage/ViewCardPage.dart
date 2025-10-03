@@ -93,7 +93,6 @@ class ViewCartPage extends StatelessWidget {
                       itemCount: controller.cartItems.length,
                       itemBuilder: (context, index) {
                         final item = controller.cartItems[index];
-                        print("kkkkkkkkkkkkkkkkkkkkkkkkkk$item");
                         final isLiquor = item['type'] == 'liquor';
                         int qty = isLiquor
                             ? ((item['small'] ?? 0) + (item['large'] ?? 0))
