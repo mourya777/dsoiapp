@@ -8,6 +8,8 @@ import '../UtilsPage/StringsPage.dart';
 import '../wedgetPage/CustomeText.dart';
 import '../wedgetPage/GlobleList.dart';
 import '../wedgetPage/VerifyRFIDPopup.dart';
+import 'FastFoodPage.dart';
+import 'FoodMenuPage.dart';
 import 'LiquorsPage.dart';
 import 'ManuItemPage.dart';
 import 'buttombarPage.dart';
@@ -86,17 +88,26 @@ class MenuView extends StatelessWidget {
 
                   void navigate() {
                     final typeLower = card.title.toLowerCase();
-                    if (typeLower == "liquor") {
-                      GlobalCart.cartData[0]["cat_id"] = "$catId";
-                      Get.to(() => LiquorPage(catId: catId));
-                    } else if (typeLower == "food" || typeLower == "fastfood") {
-                      Get.to(() => MenuItemsPage(catId: catId));
-                      GlobalCart.cartData[0]["cat_id"] = "$catId";
+                    print("🔄 NAVIGATING: '$typeLower' (catId: $catId)");
 
-                    } else {
-                      Get.to(() => MenuItemsPage(catId: catId));
-                      GlobalCart.cartData[0]["cat_id"] = "$catId";
-
+                    // Ensure proper GlobalCart setup
+                    if (typeLower.contains("liquor") || catId == "2") {
+                      int cartIndex = 1;
+                      GlobalCart.cartData[cartIndex]["cat_id"] = "2";
+                      print("✅ NAVIGATING TO LIQUOR (GlobalCart index: $cartIndex)");
+                      Get.to(() => LiquorPage(catId: "2"));
+                    }
+                    else if (typeLower.contains("fast") || catId == "90") {
+                      int cartIndex = 2;
+                      GlobalCart.cartData[cartIndex]["cat_id"] = "90";
+                      print("✅ NAVIGATING TO FASTFOOD (GlobalCart index: $cartIndex)");
+                      Get.to(() => FastFoodPage(catId: "90"));
+                    }
+                    else {
+                      int cartIndex = 0;
+                      GlobalCart.cartData[cartIndex]["cat_id"] = "1";
+                      print("✅ NAVIGATING TO FOOD (GlobalCart index: $cartIndex)");
+                      Get.to(() => FoodPage(catId: "1"));
                     }
                   }
 
@@ -106,13 +117,13 @@ class MenuView extends StatelessWidget {
                     RFIDDialog.show(
                       context,
                       card.title,
-
                       onVerified: () {
                         navigate();
                       },
                     );
                   }
                 },
+
 
                 child: Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),

@@ -29,7 +29,7 @@ class ProfileController extends GetxController {
               ),
             ),
             child: Card(
-              color: AppColors.transparent,
+              color: AppColors.white,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,

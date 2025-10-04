@@ -486,17 +486,13 @@ import '../wedgetPage/GlobleList.dart';
 import '../wedgetPage/SnackBarMessage.dart';
 import 'ManuPage.dart';
 import 'ViewCardPage.dart';
-
 class LiquorPage extends StatelessWidget {
-  final String catId; // ✅ Declare catId
+  final String catId;
   final LiquorController controller;
-  final HomeController homeController = Get.put(HomeController());
   final RxString searchQuery = "".obs;
 
   LiquorPage({Key? key, required this.catId})
-      : controller = Get.put(
-    LiquorController(catId: catId),
-  ), // ✅ Initialize controller with catId
+      : controller = Get.put(LiquorController(catId: catId)),
         super(key: key);
 
   Color getTickColor(int stock) {
@@ -554,64 +550,43 @@ class LiquorPage extends StatelessWidget {
       ),
       backgroundColor: AppColors.white,
       body: Obx(() {
-        // 🟢 Loading indicator while data is fetching
         if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.categories.isEmpty) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Text(
+              "No liquor categories available",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           );
         }
 
         return Column(
           children: [
-            // ✅ Search Bar
+            // Search Bar
             Container(
               color: AppColors.primary.withOpacity(0.2),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: TextField(
                   onChanged: (value) => searchQuery.value = value.toLowerCase(),
                   decoration: InputDecoration(
                     hintText: "Search categories",
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: AppColors.black,
-                    ),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.black),
                     filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: AppColors.black.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: AppColors.black.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: AppColors.primary,
-                        width: 2,
-                      ),
-                    ),
+                    fillColor: AppColors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ),
             ),
 
-            // ✅ Scrollable list of categories
+            // Scrollable list of categories
             Expanded(
               child: Container(
                 color: AppColors.primary.withOpacity(0.2),
@@ -621,204 +596,210 @@ class LiquorPage extends StatelessWidget {
                       var item = controller.getCurrentItem(cat);
                       int stock = controller.stockLevels[cat] ?? 0;
 
-                      if (searchQuery.isNotEmpty &&
-                          !item['name'].toLowerCase().contains(
-                            searchQuery.value,
-                          )) {
+                      if (searchQuery.isNotEmpty && !item['name'].toLowerCase().contains(searchQuery.value)) {
                         return const SizedBox.shrink();
                       }
 
                       return Obx(() {
                         var item = controller.getCurrentItem(cat);
-                        bool hasOffer =
-                            controller.bogoOffers[cat]?.contains(
-                              controller.selectedTypeIndex[cat],
-                            ) ??
-                                false;
+                        bool hasOffer = controller.bogoOffers[cat]?.contains(controller.selectedTypeIndex[cat]) ?? false;
 
                         return Card(
                           margin: const EdgeInsets.all(12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           child: Padding(
                             padding: const EdgeInsets.all(12),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: DropdownButton<int>(
-                                        value:
-                                        controller.selectedTypeIndex[cat],
-                                        items: List.generate(
-                                          controller.liquorData[cat]!.length,
-                                              (index) => DropdownMenuItem(
-                                            value: index,
-                                            child: Text(
-                                              controller
-                                                  .liquorData[cat]![index]
-                                              ['name']
-                                              as String,
-                                              style: const TextStyle(
-                                                color: AppColors.black,
-                                              ),
+                                // ✅ FIXED: Dropdown with proper constraints
+                                Container(
+                                  constraints: BoxConstraints(
+                                    minHeight: 48, // Ensure minimum height
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            isExpanded: true, // ✅ Important for layout
+                                            value: controller.selectedTypeIndex[cat],
+                                            items: List.generate(
+                                              controller.liquorData[cat]!.length,
+                                                  (index) {
+                                                var brandItem = controller.liquorData[cat]![index];
+                                                int brandStock = brandItem['stock'] ?? 0;
+                                                bool isOutOfStock = brandStock < 10;
+
+                                                return DropdownMenuItem(
+                                                  value: index,
+                                                  child: Container(
+                                                    width: double.infinity, // ✅ Take full width
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            brandItem['name'] as String,
+                                                            style: TextStyle(
+                                                              color: isOutOfStock ? Colors.grey : AppColors.black,
+                                                              fontSize: 14,
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ),
+                                                        if (isOutOfStock)
+                                                          const Padding(
+                                                            padding: EdgeInsets.only(left: 8.0),
+                                                            child: Text(
+                                                              "(Out of Stock)",
+                                                              style: TextStyle(
+                                                                color: Colors.red,
+                                                                fontSize: 10,
+                                                                fontStyle: FontStyle.italic,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  enabled: !isOutOfStock,
+                                                );
+                                              },
                                             ),
+                                            onChanged: (val) {
+                                              if (val != null) {
+                                                var selectedBrand = controller.liquorData[cat]![val];
+                                                int brandStock = selectedBrand['stock'] ?? 0;
+
+                                                if (brandStock < 10) {
+                                                  CustomSnackBar.show(
+                                                    title: "Out of Stock",
+                                                    message: "${selectedBrand['name']} is currently out of stock!",
+                                                    icon: Icons.error,
+                                                    backgroundColor: AppColors.red,
+                                                    textColor: AppColors.white,
+                                                    iconColor: AppColors.white,
+                                                  );
+                                                } else {
+                                                  controller.selectedTypeIndex[cat] = val;
+                                                }
+                                              }
+                                            },
                                           ),
                                         ),
-                                        onChanged: (val) {
-                                          if (stock < 10) {
-                                            CustomSnackBar.show(
-                                              title: "Error",
-                                              message:
-                                              "This brand not available!",
-                                              icon: Icons.close,
-                                              backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                              iconColor: Colors.white,
-                                            );
-                                          } else {
-                                            controller.selectedTypeIndex[cat] =
-                                                val ?? 0;
-                                          }
-                                        },
                                       ),
-                                    ),
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: getTickColor(stock),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 8),
+                                      Icon(Icons.check_circle, color: getTickColor(stock)),
+                                    ],
+                                  ),
                                 ),
+
                                 if (hasOffer)
                                   const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 4.0,
-                                    ),
-                                    child: Text(
-                                      "Buy 1 Get 1 Free!",
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                                    child: Text("Buy 1 Get 1 Free!", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                                   ),
+
                                 const SizedBox(height: 8),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.asset(
-                                        item['image'],
-                                        width: 90,
-                                        height: 90,
-                                        fit: BoxFit.cover,
+
+                                // ✅ FIXED: Content with proper constraints
+                                Container(
+                                  constraints: BoxConstraints(
+                                    minHeight: 90, // Ensure minimum height for content
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.asset(
+                                          item['image'],
+                                          width: 90,
+                                          height: 90,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              width: 90,
+                                              height: 90,
+                                              color: Colors.grey[200],
+                                              child: Icon(Icons.image, color: Colors.grey[400]),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item['name'],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: AppColors.black,
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              item['name'],
+                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "₹${item['price']}/-",
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.primary,
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                    "₹${item['price']}/-",
+                                                    style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  // - ICON
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey.shade200,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        controller.removeItem(cat);
-                                                        GlobalCart.cartData[0]
-                                                        ["order"]
-                                                            .removeWhere(
-                                                              (orderItem) =>
-                                                          orderItem["prd_id"] ==
-                                                              "${item['prd_id']}",
-                                                        );
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.remove,
-                                                        color: Colors.black,
+                                                Row(
+                                                  children: [
+                                                    // - ICON
+                                                    Container(
+                                                      decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                                                      child: IconButton(
+                                                        onPressed: () => controller.removeItem(cat),
+                                                        icon: const Icon(Icons.remove, color: Colors.black, size: 20),
+                                                        padding: EdgeInsets.zero,
+                                                        constraints: BoxConstraints.tightFor(width: 36, height: 36),
                                                       ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(width: 6),
+                                                    const SizedBox(width: 6),
+                                                    // + ICON
+                                                    Container(
+                                                      decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          var currentItem = controller.getCurrentItem(cat);
+                                                          int currentStock = currentItem['stock'] ?? 0;
 
-                                                  // + ICON
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey.shade200,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        controller.addItem(cat);
-
-                                                        int smallQty =
-                                                        controller.getSmall(cat);
-                                                        int largeQty =
-                                                        controller.getLarge(cat);
-
-                                                        GlobalCart.cartData[0]["order"]
-                                                            .add({
-                                                          "prd_id": "${item['id']}",
-                                                          "qty":
-                                                          (smallQty + largeQty)
-                                                              .toString(),
-                                                          "type": "liquor",
-                                                          "small": smallQty.toString(),
-                                                          "large": largeQty.toString(),
-                                                          "price": "${item['price']}",
-                                                        });
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.add,
-                                                        color: Colors.black,
+                                                          if (currentStock < 10) {
+                                                            CustomSnackBar.show(
+                                                              title: "Out of Stock",
+                                                              message: "This brand is currently out of stock!",
+                                                              icon: Icons.error,
+                                                              backgroundColor: AppColors.red,
+                                                              textColor: AppColors.white,
+                                                              iconColor: AppColors.white,
+                                                            );
+                                                          } else {
+                                                            controller.addItem(cat);
+                                                          }
+                                                        },
+                                                        icon: const Icon(Icons.add, color: Colors.black, size: 20),
+                                                        padding: EdgeInsets.zero,
+                                                        constraints: BoxConstraints.tightFor(width: 36, height: 36),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            "Small: ${controller.getSmall(cat)}   Large: ${controller.getLarge(cat)}",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.primary,
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(height: 6),
+                                            Text(
+                                                "Small: ${controller.getSmall(cat)}   Large: ${controller.getLarge(cat)}",
+                                                style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -836,110 +817,64 @@ class LiquorPage extends StatelessWidget {
 
       bottomNavigationBar: Obx(() {
         int total = controller.getTotalPrice();
-        if (total == 0) return SizedBox.shrink();
+        if (total == 0) return const SizedBox.shrink();
+
         return Container(
           height: 70,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: AppColors.white,
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+              color: AppColors.white,
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Total: ₹$total/-",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: AppColors.primary,
-                ),
+                  "Total: ₹$total/-",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.primary)
               ),
               Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.khakiLight,
-                      AppColors.primary,
-                      AppColors.secondary,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: const LinearGradient(colors: [AppColors.khakiLight, AppColors.primary, AppColors.secondary]),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
                   onPressed: () async {
-                    final balanceString = GlobalList.memberData["member_balance"] ?? "0.00"
-                        .replaceAll(RegExp(r'[^0-9]'), '');
-                    final balance = int.tryParse(balanceString) ?? 0;
-                    final total = controller.getTotalPrice();
+                    int liquorCartIndex = 1;
+                    bool hasLiquorItems = GlobalCart.cartData[liquorCartIndex]["order"].isNotEmpty;
 
-                    if (total > balance) {
+                    if (!hasLiquorItems) {
                       CustomSnackBar.show(
-                        title: "Error",
-                        message: "You don't have sufficient balance!",
-                        icon: Icons.close,
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                        iconColor: Colors.white,
+                        title: "Empty",
+                        message: "No liquor items in cart!",
+                        icon: Icons.info,
+                        backgroundColor: AppColors.primary,
+                        textColor: AppColors.white,
+                        iconColor: AppColors.white,
                       );
-                    } else {
-                      TempCart.liquorItems.clear();
-
-                      for (var cat in controller.categories) {
-                        final item = controller.getCurrentItem(cat);
-                        final smallQty = controller.getSmall(cat);
-                        final largeQty = controller.getLarge(cat);
-
-                        if (smallQty > 0 || largeQty > 0) {
-                          TempCart.liquorItems.add({
-                            "name": item['name'],
-                            "price": item['price'].toString(),
-                            "image": item['image'],
-                            "small": smallQty,
-                            "large": largeQty,
-                            "item_id": item['item_id'],
-                            "type": "liquor",
-                          });
-                        }
-                      }
-
-                      CustomSnackBar.show(
-                        title: "Success",
-                        message: "Liquor items added to cart successfully!",
-                        icon: Icons.check_circle,
-                        backgroundColor: Colors.green,
-                        textColor: Colors.white,
-                        iconColor: Colors.white,
-                      );
-
-                      Get.off(() => ViewCartPage());
+                      return;
                     }
+
+                    CustomSnackBar.show(
+                      title: "Success",
+                      message: "Liquor items added to cart successfully!",
+                      icon: Icons.check_circle,
+                      backgroundColor: Colors.green,
+                      textColor: AppColors.white,
+                      iconColor: AppColors.white,
+                    );
+                    Get.off(() => ViewCartPage());
                   },
-                  child: Row(
+                  child: const Row(
                     children: [
-                      Icon(
-                        Icons.card_membership,
-                        size: 20,
-                        color: AppColors.white,
-                      ),
+                      Icon(Icons.card_membership, size: 20, color: AppColors.white),
                       SizedBox(width: 6),
-                      const Text(
-                        "VIEWCARD",
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
+                      Text("VIEW CART", style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 15)),
                     ],
                   ),
                 ),
@@ -950,4 +885,4 @@ class LiquorPage extends StatelessWidget {
       }),
     );
   }
-}
+}// class LiquorPage extends StatelessWidget {

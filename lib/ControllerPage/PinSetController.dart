@@ -58,6 +58,7 @@ class PinController extends GetxController {
     isLoading.value = false;
 
     if (result["Status"] == 1) {
+      // 🔧 FIX: result["result"] ek Map hai, List nahi
       await GlobalPrefs.setMemberData(result["result"]);
 
       CustomSnackBar.show(
@@ -70,7 +71,8 @@ class PinController extends GetxController {
       );
 
       Get.to(() => PinVerifyPage());
-    } else {
+    }
+    else {
       CustomSnackBar.show(
         title: "Error",
         message: result["Msg"] ?? "Failed to set PIN",

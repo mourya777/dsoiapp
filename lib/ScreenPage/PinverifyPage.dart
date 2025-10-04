@@ -293,49 +293,44 @@ class _PinVerifyPageState extends State<PinVerifyPage> {
                     onPressed: isLoading
                         ? null
                         : () async {
-                            setState(() => isLoading = true);
-                            final result = await controller.verifyPin();
+                      setState(() => isLoading = true);
+                      final result = await controller.verifyPin();
 
-                            setState(() => isLoading = false);
+                      setState(() => isLoading = false);
 
-                            if (result["Status"] == 1) {
+                      if (result["Status"] == 1) {
+                        // ✅ FIXED: result["result"] ek Map hai, List nahi
+                        GlobalList.memberData.value =
+                            result["result"] ?? {};
 
-                              GlobalList.memberData.value =
-                                  (result["result"] as List).isNotEmpty
-                                  ? result["result"][0]
-                                  : {};
+                        GlobalList.orders.assignAll(
+                          List<Map<String, dynamic>>.from(
+                            result["order"] ?? [],
+                          ),
+                        );
 
-                              GlobalList.orders.assignAll(
-                                List<Map<String, dynamic>>.from(
-                                  result["order"] ?? [],
-                                ),
-                              );
+                        CustomSnackBar.show(
+                          title: "Success",
+                          message: result["Msg"] ?? "PIN Verified Successfully",
+                          icon: Icons.check_circle,
+                          backgroundColor: AppColors.primary,
+                          textColor: Colors.white,
+                          iconColor: Colors.white,
+                        );
 
-                              CustomSnackBar.show(
-                                title: "Success",
-                                message:
-                                    result["Msg"] ??
-                                    "PIN Verified Successfully",
-                                icon: Icons.check_circle,
-                                backgroundColor: AppColors.primary,
-                                textColor: Colors.white,
-                                iconColor: Colors.white,
-                              );
+                        Get.offAll(() => BottomNavPage());
+                      } else {
+                        CustomSnackBar.show(
+                          title: "Error",
+                          message: result["Msg"] ?? "Incorrect PIN",
+                          icon: Icons.close,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          iconColor: Colors.white,
+                        );
+                      }
+                    },
 
-                              Get.offAll(
-                                () => BottomNavPage(),
-                              ); // ✅ ab navigate karega
-                            } else {
-                              CustomSnackBar.show(
-                                title: "Error",
-                                message: result["Msg"] ?? "Incorrect PIN",
-                                icon: Icons.close,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                iconColor: Colors.white,
-                              );
-                            }
-                          },
 
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,

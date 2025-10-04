@@ -18,6 +18,7 @@ class SplashController extends GetxController {
     final memberData = await GlobalPrefs.getMemberData();
 
     String? memberAuth = memberData?["member_auth"];
+    print("auth$memberAuth");
     print('Authontication$memberAuth');
 
     if (memberAuth == null || memberAuth.isEmpty || memberAuth == "0") {

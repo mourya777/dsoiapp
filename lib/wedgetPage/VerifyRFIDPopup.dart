@@ -54,8 +54,8 @@ class RFIDDialog {
                   controller: rfidController,
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: "RFID Number",
-                    hintText: "Your RFID Number",
+                    labelText: "DSOI PIN",
+                    hintText: "your dsoi pin",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

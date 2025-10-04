@@ -23,50 +23,50 @@ class ViewCartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary.withOpacity(0.2),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: AppColors.primary,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                'Assets/Images/appbar_logo-removebg-preview.png',
-                height: 50,
-                width: 50,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: AppColors.primary,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'Assets/Images/appbar_logo-removebg-preview.png',
+              height: 50,
+              width: 50,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              "${AppStrings.locationJabalpur}",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w900, // aur bold
+                color: AppColors.white, // AppColors.golden bhi use kar sakte ho
+                letterSpacing: 1.5, // thoda space letters ke beech
+                shadows: [
+                  Shadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 4,
+                    color: Colors.black26,
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Text(
-                "${AppStrings.locationJabalpur}",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900, // aur bold
-                  color: AppColors.white, // AppColors.golden bhi use kar sakte ho
-                  letterSpacing: 1.5, // thoda space letters ke beech
-                  shadows: [
-                    Shadow(
-                      offset: Offset(2, 2),
-                      blurRadius: 4,
-                      color: Colors.black26,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Get.offAll(MenuView());
-                  },
-                  icon: Icon(Icons.menu, color: AppColors.white),
-                ),
-                SizedBox(width: 20),
-              ],
             ),
           ],
         ),
+        actions: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Get.offAll(MenuView());
+                },
+                icon: Icon(Icons.menu, color: AppColors.white),
+              ),
+              SizedBox(width: 20),
+            ],
+          ),
+        ],
+      ),
       body: Obx(() {
         if (controller.cartItems.isEmpty) {
           return const Center(child: Text("Your cart is empty"));
@@ -246,25 +246,38 @@ class ViewCartPage extends StatelessWidget {
                             // -------------------- Check User Balance --------------------
                             final user = await SessionManager.getUser();
                             if (user != null) {
-                              final double balance = double.tryParse(user.records.memberBalance.toString()) ?? 0;
+                              final balanceString =
+                                  GlobalList.memberData["member_balance"] ??
+                                  "0.00";
 
-                              // Calculate total cart price
+                              final cleanedBalanceString = balanceString
+                                  .toString()
+                                  .replaceAll(RegExp(r'[^0-9.]'), '');
+
+                              final balance =
+                                  double.tryParse(cleanedBalanceString) ?? 0.0;
+
                               double totalPrice = 0;
                               for (var item in controller.cartItems) {
                                 final isLiquor = item['type'] == 'liquor';
                                 final qty = isLiquor
-                                    ? ((item['small'] ?? 0) + (item['large'] ?? 0))
+                                    ? ((item['small'] ?? 0) +
+                                          (item['large'] ?? 0))
                                     : (item['qty'] ?? 1);
-                                final price = double.tryParse(item['price'].toString()) ?? 0;
+                                final price =
+                                    double.tryParse(item['price'].toString()) ??
+                                    0;
                                 totalPrice += isLiquor
-                                    ? ((item['small'] ?? 0) * price + (item['large'] ?? 0) * price * 2)
+                                    ? ((item['small'] ?? 0) * price +
+                                          (item['large'] ?? 0) * price * 2)
                                     : price * qty;
                               }
 
                               if (balance < totalPrice) {
                                 CustomSnackBar.show(
                                   title: "Insufficient Balance",
-                                  message: "You do not have enough balance to place this order.",
+                                  message:
+                                      "You do not have enough balance to place this order.",
                                   icon: Icons.error,
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white,
@@ -273,10 +286,15 @@ class ViewCartPage extends StatelessWidget {
                                 return; // Stop here, do not call API
                               }
                               // Set member ID
-                              GlobalCart.cartData[0]["member_id"] = "${user.records.memberId}";
-                              print("Member ID: ${GlobalCart.cartData[0]["member_id"]}");
+                              GlobalCart.cartData[0]["member_id"] =
+                                  "${user.records.memberId}";
+                              print(
+                                "Member ID: ${GlobalCart.cartData[0]["member_id"]}",
+                              );
                             } else {
-                              print("Member ID: ${GlobalCart.cartData[0]["member_id"]}");
+                              print(
+                                "Member ID: ${GlobalCart.cartData[0]["member_id"]}",
+                              );
                             }
 
                             // -------------------- Call API --------------------
@@ -284,17 +302,45 @@ class ViewCartPage extends StatelessWidget {
                               final response = await OrderApiService.orderNow();
                               print("Order placed successfully: $response");
 
-
                               controller.cartItems.refresh();
-                              Get.offAll(() => ThankYouPage(
-                                userName: user?.mainMemberName ?? "John Doe",
-                                cartItems: List<Map<String, dynamic>>.from(controller.cartItems),
-                                orderNo: "ORD${DateTime.now().millisecondsSinceEpoch}",
-                                userType: user?.records.memberType,
-                                orderStatusMsg: response['order'] == null || response['order'][0] == null
-                                    ? "Stock Not Available"
-                                    : null,
-                              ));
+                              Get.offAll(
+                                () => ThankYouPage(
+                                  userName:
+                                      "${GlobalList.memberData["member_fname"] ?? ""} ${GlobalList.memberData["member_lname"] ?? ""}",
+                                  cartItems: List<Map<String, dynamic>>.from(
+                                    controller.cartItems,
+                                  ),
+                                  orderNo: response['orders'] != null
+                                      ? (response['orders'] as List)
+                                            .where(
+                                              (o) => o['status'] == 1,
+                                            ) // sirf successful orders
+                                            .map(
+                                              (o) => o['order_code'].toString(),
+                                            )
+                                            .join(', ')
+                                      : "N/A",
+                                  userType:
+                                      "${GlobalList.memberData["member_type"] != null ? (GlobalList.memberData["member_type"].toString() == "0" ? "MainMember" : "SubMember") : ""}",
+                                  orderStatusMsg:
+                                      (response['orders'] != null &&
+                                          (response['orders'] as List).any(
+                                            (o) => o['status'] == 0,
+                                          ))
+                                      ? "Order Placed Successfully"
+                                      : null,
+
+                                ),
+
+                              );
+                              CustomSnackBar.show(
+                                title: "Order Placed Successfully",
+                                message: "Your order will reach your location in 5 minutes",
+                                icon: Icons.check_circle,
+                                backgroundColor: AppColors.primary,
+                                textColor: AppColors.white,
+                                iconColor: AppColors.white,
+                              );
                             } catch (e) {
                               print("Failed to place order: $e");
                               CustomSnackBar.show(
@@ -306,15 +352,14 @@ class ViewCartPage extends StatelessWidget {
                                 iconColor: Colors.white,
                               );
                             }
-                                TempCart.menuItems.clear();
+                            TempCart.menuItems.clear();
                             TempCart.liquorItems.clear();
                             TempCart.fastFoodItems.clear();
-                            final liquorController = Get.find<LiquorController>();
-                            await liquorController.fetchLiquorProducts(); // 🔄 Refres
+                            final liquorController =
+                                Get.find<LiquorController>();
+                            await liquorController
+                                .fetchLiquorProducts(); // 🔄 Refres
                           },
-
-
-
 
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
